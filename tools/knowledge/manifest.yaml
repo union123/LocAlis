@@ -1,0 +1,14 @@
+name: knowledge
+version: 1.0.0
+entrypoint: knowledge_tool.py
+description: >
+  Локальная база знаний: добавление документов (текст, PDF, CSV, XLSX, JSON,
+  веб-страницы) и гибридный поиск по ним (точный + смысловой). Всё хранится
+  локально (SQLite FTS5 + вектора bge-m3 через Ollama). Модели могут искать
+  по базе в ходе задач и пополнять её новыми знаниями.
+requires_context: true
+
+config:
+  # Эмбеддинг-бэкенд: ollama-bge | local-pplx (pplx-embed-v1-0.6b).
+  # ВАЖНО: при смене бэкенда базу нужно переиндексировать — вектора несовместимы.
+  embed_backend: ollama-bge

@@ -1,0 +1,276 @@
+# =====================================================================
+#  Реестр моделей по РОЛЯМ.
+#  Добавить модель = добавить запись здесь. Код НЕ меняется.
+#  См. CONTRIBUTING_MODELS.md
+#
+#  Железо: RTX 3070 Laptop 8 ГБ VRAM, 42 ГБ RAM.
+#  Модели грузятся по очереди (Ollama выгружает предыдущую),
+#  поэтому суммарный размер не важен — важен размер одной модели.
+#
+#  num_ctx — окно контекста в ТОКЕНАХ. На 8 ГБ VRAM рост окна двигает
+#  KV-cache в RAM (42 ГБ есть), но медленнее первый префилл. Компромисс:
+#  исполнители (передают артефакты/читают файпы) — 32K, планировщик — 16K.
+# =====================================================================
+version: "1.0"
+
+# ---------------------------------------------------------------------
+# Router: самая лёгкая роль. Классификация задачи.
+# 3B Q4/Q6 -> ~2 ГБ VRAM, отвечает за секунды.
+# ---------------------------------------------------------------------
+router:
+  provider: ollama
+  model: "qwen2.5:3b-instruct"
+  temperature: 0.0
+  num_ctx: 4096
+
+# ---------------------------------------------------------------------
+# Embeddings для Retrieval Agent
+# ---------------------------------------------------------------------
+embeddings:
+  provider: ollama
+  model: "bge-m3:latest"
+  dim: 1024
+
+# ---------------------------------------------------------------------
+# Proposers: ТРИ модели РАЗНЫХ семейств (нечётное число -> нет ничьих).
+# Разные семейства => разные систематические ошибки, ансамбль полезен.
+# enabled: false — быстро отключить модель, не удаляя запись.
+# ---------------------------------------------------------------------
+# ЗАМЕРЕНО на этой машине (3 сложных агентских задачи: фильтр в запросе,
+# параметр CRS, отказ выдумывать по отсутствующему файлу).
+#
+# ЛОКАЛЬНЫЕ (Ollama):
+#   qwen3:8b (think=false)      3/3   1.4 с   <- лучшее соотношение
+#   qwen2.5-coder:7b-instruct   3/3   3.8 с
+#   OxW/Qwen3-8b-ru             3/3  22.9 с   (медленный: 84% GPU + размышления)
+#   ministral-3:8b              2/3   5.8 с   (не распознал отсутствующий файл)
+#
+# ПРОВЕРЕНО В ОБЛАКЕ перед загрузкой (экономит гигабайты трафика):
+#   nvidia/nemotron-3-nano-30b-a3b  3/3   5.3 с  но локальная версия = 24 ГБ
+#   openai/gpt-oss-20b              2/3   8.5 с  загрузка 13 ГБ ОТМЕНЕНА: не лучше
+#   google/gemma-4-26b-a4b          2/3   7.6 с  + gemma3 в Ollama вообще без tools
+#
+# О РАЗНООБРАЗИИ СЕМЕЙСТВ (важно для голосования 2 из 3):
+# Три копии одного семейства дают три одинаковые ошибки, и консенсус
+# подтвердит неверный ответ. Считать нужно по РАЗРАБОТЧИКУ, а не по названию:
+# qwen3 и qwen2.5-coder — разные архитектуры, но один разработчик (Alibaba),
+# то есть общий корпус обучения и общие слепые зоны.
+proposers:
+  - id: "proposer_a"
+    provider: ollama
+    model: "glm-4.7-flash"              # Восстановлено 23.08 (утеряно при git-аварии, замеры 20.08):
+                                        # 15.32 ток/с при num_ctx=32768; tau2-Bench 79.5,
+                                        # GPQA 75.2, SWE-bench Verified 59.2. Заменяет gemma4:26b —
+                                        # та была слабейшей из трёх на агентских бенчмарках
+                                        # (MCP-Atlas 54.2 против Muse 75.5 / Qwen3.6 62.5).
+    temperature: 0.2
+    num_ctx: 32768
+    enabled: true
+    supports_tools: true
+    think: false
+    keep_alive: "10m"
+  - id: "proposer_b"
+    provider: llamacpp
+    model: "ornith15"                   # Ornith-1.5-35B-A3B MoE (~3B активных), GGUF Q4_K_M 20 ГБ.
+                                        # Заменяет qwen3.6:35b-a3b (Terminal-Bench 2.1: 67.8 vs 52.5).
+                                        # Quality-suite 30.08 (ручная проверка): 9/11 — математика верна
+                                        # (ложный FAIL чека на разделителях), головоломка противоречива.
+                                        # 10.9 т/с с --cpu-moe. Запуск:
+                                        #   llama-server --model C:\path\to\your\Ornith-1.5-35B-Q4_K_M.gguf  # <- укажите свой путь к GGUF
+                                        #     --alias ornith15 -ngl 99 --cpu-moe -c 32768 --flash-attn on --port 8081
+                                        # ВАЖНО: модель считает себя "Claude от Anthropic" (identity-загрязнение
+                                        # при дотренировке) — на качество кода не влияет.
+                                        # Порт 8081 общий с coder_next — одновременно не поднимать.
+    temperature: 0.2
+    num_ctx: 32768
+    enabled: true
+    supports_tools: true
+    think: false
+    extra:
+      base_url: "http://127.0.0.1:8081"
+      server_model: "ornith15"
+  - id: "proposer_c"
+    provider: ollama
+    model: "nemotron-3.5-lightning:30b-a3b-q4_K_M"  # Восстановлено 23.08 (замер 20.08):
+                                        # NVIDIA Mamba2+MoE, 14.71 ток/с, надёжный tool calling.
+                                        # gpt-oss:20b снят: живой прогон 9aae0be702d0 — шаг s1
+                                        # «ungrounded guess» (инструменты не вызывал, ответ придуман).
+    temperature: 0.2
+    num_ctx: 32768
+    enabled: true
+    supports_tools: true
+    think: false
+    keep_alive: "10m"
+  # ПРЕЖНИЕ 8B-МОДЕЛИ (заменены 17.08 на более крупные):
+  #   qwen3:8b         — был proposer_a, работал хорошо (3/3, 1.4 с)
+  #   llama3.1:8b      — был proposer_b, стабилен, но слабее на сложных задачах
+  #   ministral-3:8b   — был proposer_c, 2/3 (не распознал отсутствующий файл)
+  # Чтобы вернуть: ollama pull + запись здесь. Код не меняется.
+
+# Облачные Proposers — используются только при mode=auto и живом облаке.
+
+# ---------------------------------------------------------------------
+# Lead Agent Extra: тяжёлые модели ТОЛЬКО для роли Lead-исполнителя.
+# Не участвуют в голосовании пропозеров (нарушали бы чётность и
+# разнообразие семейств), но доступны в выпадающем списке панели.
+# Требуют запущенного внешнего сервера (llama-server).
+# ---------------------------------------------------------------------
+lead_agent_extra:
+  - id: "coder_next"
+    provider: llamacpp                       # llama-server (llama.cpp), НЕ Ollama!
+    model: "Qwen3-Coder-Next-UD-IQ3_XXS"     # имя модели на сервере (может быть любым)
+    temperature: 0.2
+    num_ctx: 32768                           # до 256K, но KV-cache на 8ГБ VRAM ограничивает
+    enabled: true
+    supports_tools: true
+    extra:
+      base_url: "http://127.0.0.1:8081"      # llama-server endpoint (8080 занят панелью)
+      server_model: "qwen3-coder-next"       # --alias при старте llama-server
+    notes: >-
+      SWE-bench Verified 71.3% (лучше glm-flash 59.2), контекст до 64K
+      на нашем запуске (-c 65536). Запуск: scripts/start_coder_next.bat —
+      llama-server -hf unsloth/Qwen3-Coder-Next-GGUF:UD-Q4_K_M -ngl 99
+      --cpu-moe --flash-attn on (MoE-эксперты в CPU RAM, mmap-подкачка с SSD,
+      ~12 ток/с decode после прогрева кэша). Порт 8081.
+
+
+cloud_proposers:
+  - id: "cloud_proposer_a"
+    provider: openrouter
+    model: "deepseek/deepseek-chat-v3-0324:free"
+    temperature: 0.2
+    enabled: false      # включать осознанно: лимиты бесплатных тиров меняются
+    supports_tools: true
+
+# ---------------------------------------------------------------------
+# Orchestrator: планировщик режима «Оркестратор».
+# ---------------------------------------------------------------------
+# ЗАМЕРЕНО 05.08 на 2 реальных составных задачах (составление JSON-плана):
+#   qwen3:8b                     2/2   26.2 с  <- выбрано
+#   deepseek-v2:16b (MoE)        2/2   59.7 с  медленнее вопреки ожиданию:
+#                                              MoE выигрывает на длинной
+#                                              генерации, а план — короткий,
+#                                              зато префилл большого промпта
+#                                              (агенты+инструменты) её тормозит
+#   qwen2.5-coder:14b (плотная)  2/2   69.3 с  прежний вариант, самый медленный
+#
+# Почему qwen3:8b: он УЖЕ загружен как proposer_a, поэтому планирование идёт
+# без повторной загрузки модели в VRAM. Инструменты планировщику не нужны —
+# он только делит задачу, поэтому отсутствие tool calling здесь не важно.
+# local_fallback используется, если основная модель не отдала корректный JSON.
+orchestrator:
+  local:
+    provider: ollama
+    model: "nemotron-3.5-lightning:30b-a3b-q4_K_M"
+    temperature: 0.1
+    num_ctx: 16384
+    think: false          # размышления удваивают время, точность плана та же
+    keep_alive: "10m"
+  # Облачный планировщик берётся из judge.cloud / judge.cloud_fallback:
+  # это те же сильные модели, отдельных записей не требуется.
+
+  # Модели, которые можно выбрать планировщиком в интерфейсе.
+  candidates:
+    - model: "nemotron-3.5-lightning:30b-a3b-q4_K_M"
+      label: "nemotron-3.5-lightning:30b — сильный планировщик (по умолчанию)"
+      provider: ollama
+      temperature: 0.1
+      num_ctx: 16384
+      think: false
+      keep_alive: "10m"
+    - model: "qwen3.6:35b-a3b"
+      label: "qwen3.6:35b-a3b — MoE, хорошее планирование"
+      provider: ollama
+      temperature: 0.1
+      num_ctx: 16384
+      think: false
+      keep_alive: "10m"
+    - model: "glm-4.7-flash"
+      label: "glm-4.7-flash — быстрый, стабильный JSON (текущий proposer_a)"
+      provider: ollama
+      temperature: 0.1
+      num_ctx: 32768
+      think: false
+      keep_alive: "10m"
+    - model: "gpt-oss:20b"
+      label: "gpt-oss:20b — широкие рассуждения (текущий verifier)"
+      provider: ollama
+      temperature: 0.1
+      num_ctx: 16384
+      think: false
+      keep_alive: "10m"
+
+# ---------------------------------------------------------------------
+# Verifier: сверка ответов, голосование 2 из 3.
+# MoE-модель: скорость плотной ~3B при качестве ~16B.
+# НЕ использовать экстремальное квантование (1-2 бита) в этой роли.
+# ---------------------------------------------------------------------
+# ЗАМЕРЕНО: deepseek-v2:16b (MoE) при 62% на GPU даёт 33.7 ток/с, тогда как
+# ПЛОТНАЯ qwen2.5-coder:14b при том же offload — всего 5.1 ток/с. Это главный
+# аргумент за MoE на 8 ГБ VRAM: активна лишь часть экспертов.
+# На сверке расходящихся ответов обе модели решили верно, но MoE вдвое быстрее
+# (12.9 с против 28.6 с). ВАЖНО: deepseek-v2 НЕ поддерживает tool calling —
+# для Verifier это не нужно (он только сверяет тексты), но в Proposers его
+# ставить нельзя.
+verifier:
+  provider: ollama
+  model: "gpt-oss:20b"        # Восстановлено 23.08 по факту конфига 20.08: MoE 20B,
+                              # шире рассуждения; в роли Verifier tool calling не нужен
+  temperature: 0.0
+  num_ctx: 8192
+  keep_alive: "5m"
+  # Порог схожести ответов для авто-консенсуса без вызова LLM (0..1)
+  similarity_threshold: 0.82
+
+# ---------------------------------------------------------------------
+# Judge: приоритет облаку, fallback — локальная сильная модель.
+# ---------------------------------------------------------------------
+# ПРО ANTHROPIC (важно): на OpenRouter НЕТ бесплатных моделей Anthropic —
+# проверено запросом к /api/v1/models: 17 моделей Anthropic, из них 0 бесплатных.
+# Самая дешёвая claude-sonnet-5 стоит $2/$10 за 1М токенов. Если нужен именно
+# Claude — раскомментируйте блок ниже, но это платно.
+#
+# ЗАМЕРЕНО на живых вызовах (роль арбитра + вызов инструмента):
+#   nvidia/nemotron-3-super-120b-a12b:free   верно + tools   3.4 с  <- выбрано
+#   inclusionai/ling-3.0-flash:free          верно + tools  11.3 с
+#   openai/gpt-oss-20b:free                  верно + tools  23.9 с
+#   nvidia/nemotron-3-ultra-550b-a55b:free   верно + tools  65.9 с  (слишком долго)
+#   google/gemma-4-31b-it:free               ошибка 429 (провайдер перегружен)
+judge:
+  cloud:
+    provider: openrouter
+    # MoE 120B-A12B: сильные рассуждения при высокой скорости, tools работают.
+    model: "nvidia/nemotron-3-super-120b-a12b:free"
+    temperature: 0.1
+    notes: "Проверено 2026-08-04: бесплатно (in=0/out=0), контекст 262k, tools+reasoning. Лимиты бесплатных тиров меняются — сверяйте на openrouter.ai/models"
+  # Резервный облачный арбитр: используется, если основной вернул ошибку/лимит
+  cloud_fallback:
+    provider: openrouter
+    model: "inclusionai/ling-3.0-flash:free"
+    temperature: 0.1
+    notes: "Проверено 2026-08-04: бесплатно, 262k, tools. Иное семейство — не падает вместе с nemotron"
+  # Платный вариант Anthropic (по запросу). Раскомментировать осознанно:
+  # cloud:
+  #   provider: openrouter
+  #   model: "anthropic/claude-sonnet-5"
+  #   temperature: 0.1
+  #   notes: "ПЛАТНО: $2 за 1М входных, $10 за 1М выходных токенов"
+  local_fallback:
+    provider: ollama
+    model: "qwen2.5-coder:14b-instruct-q4_K_M"  # плотная 14B: 5.1 ток/с при offload
+    temperature: 0.1
+    num_ctx: 8192
+    keep_alive: "5m"
+
+# ---------------------------------------------------------------------
+# Провайдеры: адреса и ключи (ключ берётся из переменной окружения)
+# ---------------------------------------------------------------------
+providers:
+  ollama:
+    base_url: "http://127.0.0.1:11434"
+    timeout_sec: 300
+  openrouter:
+    base_url: "https://openrouter.ai/api/v1"
+    api_key_env: "OPENROUTER_API_KEY"
+    timeout_sec: 120
+    app_title: "agent-platform"

@@ -1,0 +1,13 @@
+name: container
+version: 1.0.0
+entrypoint: container_tool.py
+description: >
+  Shell внутри docker-контейнера задачи (Terminal-Bench): выполнить команду,
+  прочитать/записать файл. Активен только когда задана переменная окружения
+  LOCALIS_TB_CONTAINER (адаптер TB-прогона). Позволяет платформе исполнять
+  команды в окружении задачи: установка пакетов, chmod, запуск скриптов.
+requires_context: true
+
+config:
+  # Лимит одной команды, сек
+  exec_timeout_sec: 300

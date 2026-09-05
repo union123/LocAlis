@@ -1,0 +1,23 @@
+# --- secrets & personal data (never commit) ---
+data/
+config/models.yaml
+*.sqlite3
+*.sqlite3-journal
+secrets.json
+.env
+
+# --- python ---
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# --- benches (results are personal/large) ---
+data/bench_runs/
+data/gaia_runs/
+data/tb_runs*/
+
+# --- misc ---
+.DS_Store
+Thumbs.db
+*.log

@@ -1,0 +1,11 @@
+# Создание стандартных файлов для чтения другими инструментами и QGIS.
+name: datafiles
+version: 1.0.0
+description: Создание GeoJSON, CSV, GeoPackage и обычных текстовых файлов с проверкой результата
+enabled: true
+entrypoint: datafiles_tool.py
+class_name: DataFilesTool
+config:
+  allowed_roots: []
+  max_content_chars: 1000000
+  overwrite_default: false

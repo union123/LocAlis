@@ -1,0 +1,15 @@
+name: browser
+version: 1.0.0
+entrypoint: browser_tool.py
+description: >
+  Управление headless-браузером (Playwright): открыть URL, сделать скриншот,
+  кликнуть по элементу, прочитать консоль браузера. Закрывает слепую зону
+  "компилируется, но не работает": платформа может сама увидеть сайт глазами.
+  Скриншот сохраняется в data/browser_shots/ и анализируется инструментом vision.
+requires_context: true
+
+config:
+  # Таймаут загрузки страницы, сек
+  navigation_timeout_sec: 30
+  # Куда складывать скриншоты
+  shots_dir: data/browser_shots

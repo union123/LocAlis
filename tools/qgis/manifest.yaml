@@ -1,0 +1,31 @@
+# Манифест плагина. Реестр читает его автоматически при старте.
+# Чтобы добавить свой инструмент — скопируйте эту папку и правьте поля.
+name: qgis
+version: 1.1.0
+description: Работа с геоданными через QGIS (слои, атрибуты, экспорт GeoJSON)
+enabled: true
+entrypoint: qgis_tool.py
+class_name: QgisTool
+
+# Внешние требования — только для информации в UI
+requires:
+- QGIS 3.28+ (desktop, с PyQGIS)
+
+# content_hints: подсказки домена для детерминированного ремонта планов
+# (orchestrator._repair_tools). Ядро не хардкодит "qgis" — читает эти слова
+# из манифеста. Добавил новый гео-плагин — допиши сюда его слова.
+content_hints:
+  - geojson
+  - .shp
+  - .gpkg
+  - shapefile
+  - слой
+  - координат
+  - crs
+  - epsg
+  - геопакет
+
+config:
+  # Путь к python-qgis-ltr.bat. Пусто — определяется автоматически.
+  launcher: ''
+  timeout_sec: 180

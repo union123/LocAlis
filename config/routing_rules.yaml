@@ -1,0 +1,263 @@
+# =====================================================================
+#  Правила маршрутизации Router.
+#  Это ТАБЛИЦА, а не hardcoded if/else: добавить правило = добавить
+#  запись здесь, код ядра не меняется.
+#
+#  Правила применяются сверху вниз, первое сработавшее побеждает.
+#  Если ни одно не сработало и llm_classifier.enabled = true —
+#  спрашиваем лёгкую локальную модель. Иначе берём default.
+# =====================================================================
+version: "1.0"
+
+llm_classifier:
+  enabled: true
+  fallback_to_default: true   # ошибка/таймаут модели -> default (не падаем)
+
+default:
+  complexity: needs_verification
+  needs_tools: false
+  needs_retrieval: false
+  needs_full_debate: true
+  reason: "Правило по умолчанию: полная проверка"
+
+rules:
+  # Вопросы к базе знаний (дневники, отчёты, прошлые задачи).
+  # Стоит первым: вопросительные формулировки про СВОИ данные — это поиск.
+  - name: "knowledge_question"
+    match:
+      any_keyword:
+        - "в дневник"
+        - "из дневник"
+        - "по дневника"
+        - "в отчёт"
+        - "из отчёт"
+        - "в баз знаний"
+        - "из баз знаний"
+        - "что записано"
+        - "найди в знани"
+        - "поищи в знани"
+        - "голубинка"
+        - "бельбек"
+        - "таврическ"
+    decision:
+      complexity: needs_verification
+      needs_tools: true
+      needs_retrieval: false
+      needs_full_debate: false
+      suggested_tools: ["knowledge", "files"]
+      reason: "Вопрос про свои данные — сначала knowledge.search"
+
+  # Графики и диаграммы -> инструмент charts.
+  # Стоит ВЫШЕ гео-правила: «построить диаграмму по слою» — это
+  # сначала чтение данных, но обязательно и рисование, поэтому выдаём оба.
+  - name: "chart_keywords"
+    match:
+      any_keyword:
+        - "график"
+        - "диаграмм"
+        - "гистограмм"
+        - "чарт"
+        - "построить график"
+        - "круговая"
+        - "столбчат"
+        - "визуализируй"
+        - "покажи наглядно"
+    decision:
+      complexity: needs_verification
+      needs_tools: true
+      needs_retrieval: false
+      needs_full_debate: true
+      suggested_tools: ["charts", "files", "datafiles"]
+      reason: "Нужен график — инструмент charts (данные читает files)"
+
+  # Геообработка: буферы, пересечения, зональная статистика.
+  # Выделено из geodata_keywords: такие задачи требуют run_processing,
+  # а не только чтения атрибутов.
+  - name: "geoprocessing_keywords"
+    match:
+      any_keyword:
+        - "буфер"
+        - "пересечени"
+        - "обрежь"
+        - "обрезать по"
+        - "центроид"
+        - "зональная статистик"
+        - "объедини слои"
+        - "выпуклая оболочк"
+        - "упрости геометр"
+        - "перепроецируй"
+        - "подсчёт точек"
+    decision:
+      complexity: needs_verification
+      needs_tools: true
+      needs_retrieval: false
+      needs_full_debate: true
+      suggested_tools: ["qgis", "files"]
+      reason: "Геообработка — нужен qgis__run_processing"
+
+  - name: "geodata_keywords"
+    match:
+      any_keyword:
+        - "слой"
+        - "шейпфайл"
+        - "shapefile"
+        - ".shp"
+        - ".gpkg"
+        - "geojson"
+        - "атрибут"
+        - "координат"
+        - "crs"
+        - "epsg"
+        - "qgis"
+        - "геопакет"
+        - "проекци"
+    decision:
+      complexity: needs_verification
+      needs_tools: true
+      needs_retrieval: false
+      needs_full_debate: true
+      suggested_tools: ["qgis"]
+      reason: "Признаки работы с геоданными — нужен инструмент QGIS"
+
+  # Запросы на коллективную работу локальных моделей-агентов.
+  # Без этого правила needs_tools=false и инструмент local_agents
+  # не попадёт в промпт моделей.
+  - name: "local_agents_keywords"
+    match:
+      any_keyword:
+        - "спроси мнение"
+        - "второе мнение"
+        - "мнение нескольких"
+        - "обсуди"
+        - "обсуждение"
+        - "дебат"
+        - "спор"
+        - "другой моделью"
+        - "другой агент"
+        - "подзадач"
+        - "раздели задачу"
+        - "разбей задачу"
+        - "агентам"
+        - "между моделями"
+        - "критикуй"
+    decision:
+      complexity: needs_verification
+      needs_tools: true
+      needs_retrieval: false
+      needs_full_debate: true
+      suggested_tools: ["local_agents"]
+      reason: "Задача требует работы нескольких локальных агентов"
+
+  # Текстовые и офисные документы -> инструмент files.
+  # ВАЖНО (реальный сбой 03.08 вечером): правило file_path_present ставило
+  # needs_tools=true, но НЕ указывало suggested_tools. Модели получали весь
+  # набор инструментов и пытались открыть .txt через QGIS — получали
+  # «QGIS не смог открыть слой» и сообщали «файл отсутствует», хотя файл был.
+  # Это правило стоит ВЫШЕ file_path_present: расширение документа важнее
+  # общего признака «в тексте есть путь».
+  - name: "document_file_keywords"
+    match:
+      # pdf добавлен 05.08 вместе с его чтением в files (через pypdf)
+      regex: "\\.(txt|md|log|json|xml|ya?ml|docx?|xlsx|xlsm|pdf|py|ini|cfg|sql|html?)\\b"
+    decision:
+      complexity: needs_verification
+      needs_tools: true
+      needs_retrieval: false
+      needs_full_debate: true
+      # datafiles тоже: такой запрос часто означает «создать отчёт.xlsx»,
+      # а не только чтение уже существующего файла
+      suggested_tools: ["files", "datafiles"]
+      reason: "Указан текстовый или офисный файл — нужны files/datafiles"
+
+  # Просмотр папки и поиск по файлам
+  - name: "directory_keywords"
+    match:
+      any_keyword:
+        - "в папке"
+        - "в каталоге"
+        - "список файлов"
+        - "какие файлы"
+        - "содержимое папки"
+        - "найди файл"
+        - "поищи в файлах"
+        - "прочитай файл"
+        - "открой файл"
+        # Жалоба 05.08: запросы без явного пути («на рабочем столе»,
+        # «в загрузках») не попадали ни в одно правило — модели работали
+        # без инструментов и отвечали по памяти.
+        - "рабочем столе"
+        - "рабочий стол"
+        - "в загрузках"
+        # НЕ добавлять «в документах»: эта фраза относится к поиску по базе
+        # знаний (retrieval_keywords), а не к папке Документы — проверено тестом.
+        - "в папке документы"
+        - "где лежит"
+        - "где находится файл"
+        - "сохрани"
+        - "создай файл"
+        - "запиши в файл"
+        - "в excel"
+        - "в word"
+    decision:
+      complexity: needs_verification
+      needs_tools: true
+      needs_full_debate: true
+      # files находит и читает, datafiles создаёт — даём оба,
+      # чтобы «сохрани на рабочий стол» работало за один прогон
+      suggested_tools: ["files", "datafiles"]
+      reason: "Поиск, чтение или создание файлов — нужны files/datafiles"
+
+  - name: "file_path_present"
+    match:
+      regex: "[A-Za-z]:\\\\|\\.(shp|gpkg|geojson|csv|xlsx)\\b"
+    decision:
+      complexity: needs_verification
+      needs_tools: true
+      needs_full_debate: true
+      # ОБЯЗАТЕЛЬНО перечисляем инструменты: без этого поля модель выбирает
+      # наугад из всего набора и уходит в неподходящий (проверено 03.08)
+      suggested_tools: ["files", "qgis"]
+      reason: "В задаче указан путь к файлу — вероятен вызов инструмента"
+
+  - name: "retrieval_keywords"
+    match:
+      any_keyword:
+        - "найди в документах"
+        - "по отчёту"
+        - "по отчету"
+        - "в базе знаний"
+        - "что известно о"
+    decision:
+      complexity: ambiguous
+      needs_tools: false
+      needs_retrieval: true
+      needs_full_debate: true
+      reason: "Требуется поиск по локальной базе знаний"
+
+  - name: "explicit_verification"
+    match:
+      any_keyword:
+        - "перепроверь"
+        - "точно ли"
+        - "убедись"
+        - "сверь"
+    decision:
+      complexity: needs_verification
+      needs_full_debate: true
+      reason: "Пользователь явно просит проверку — полный цикл"
+
+  - name: "trivial_short"
+    match:
+      max_length: 60
+      any_keyword:
+        - "привет"
+        - "как дела"
+        - "который час"
+        - "переведи"
+        - "сколько будет"
+    decision:
+      complexity: simple
+      needs_tools: false
+      needs_retrieval: false
+      needs_full_debate: false
+      reason: "Короткая простая задача — полный дебат не требуется"

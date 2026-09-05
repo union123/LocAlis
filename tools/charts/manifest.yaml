@@ -1,0 +1,20 @@
+# Построение графиков в PNG.
+# Логичное продолжение datafiles: посчитали -> построили диаграмму ->
+# вложили в отчёт Word/Excel.
+name: charts
+version: 1.0.0
+description: Построить график (столбцы, линия, круговая, точки) и сохранить в PNG
+enabled: true
+entrypoint: charts_tool.py
+class_name: ChartsTool
+
+requires:
+  - matplotlib
+
+config:
+  width_inch: 9
+  height_inch: 5
+  dpi: 130
+  # Максимум точек: больше не читается глазом и раздувает PNG
+  max_points: 200
+  allowed_roots: []

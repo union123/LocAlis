@@ -1,0 +1,57 @@
+version: '1.0'
+mode: auto
+privacy:
+  force_local_for_sensitive: true
+  sensitive_markers:
+  - конфиденциально
+  - не для публикации
+  - ДСП
+  - секретно
+  - внутренний отчёт
+feature_flags:
+  router: true
+  retrieval: false
+  tools: true
+  proposers: true
+  verifier: true
+  judge: true
+  cloud_judge: true
+  judge_subagents: true
+  orchestrator: true
+  lead_agent: true          # Lead Agent: один сильный исполнитель делает задачу
+                            # целиком без LLM-планировщика (24.08, см. main_graph)
+  team_mode: false          # Режим «Команда»: совещание моделей + крест-накрест
+                            # (24.08). Включается также раундами совещания в задаче
+  orchestrator_review: true  # B5: adversarial-ревью итога верификатором после сборки
+  observability: false
+resilience:
+  fail_max: 3
+  reset_timeout_sec: 30
+  health_timeout_sec: 5
+  health_cache_sec: 20
+  health_url: https://openrouter.ai/api/v1/key
+paths:
+  blackboard_db: "data/blackboard.sqlite3"
+  memory_db: "data/memory.sqlite3"
+  knowledge_db: "data/knowledge.sqlite3"   # гибридная база знаний (FTS5 + вектора)
+  knowledge_embed_backend: "ollama-bge"    # ollama-bge | local-pplx (pplx-embed-v1-0.6b).
+                                           # При смене — переиндексация базы обязательна.
+  vector_index: "data/index"
+  logs: "data/logs"
+limits:
+  proposer_timeout_sec: 180
+  judge_timeout_sec: 240
+  max_tool_iterations: 10    # сколько раз Proposer может вызвать инструменты.
+  lead_agent_iterations: 25  # Lead Agent: лимит итераций на всю задачу целиком.
+  meeting_rounds_default: 1  # Команда: раундов совещания по умолчанию (0 = выкл).
+  research_limit: 6          # A3: максимум поисковых вызовов до первой записи.
+                             # Иначе модель читает 6-8 страниц подряд и съедает
+                             # полчаса (задача d1d0e9c3, 24.08).
+                              # Больше итераций = можно читать файлы порциями
+                              # (read_text с offset), но риск зацикливания ловится
+                              # отдельной защитой от повторов (см. proposer.py).
+  context_summary_tokens: 400
+  max_plan_steps: 6
+orchestrator:
+  placement: auto
+  model: deepseek-v2:16b
