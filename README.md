@@ -23,7 +23,8 @@
 исполнитель работает через 11+ инструментов (файлы, CSV/Excel, QGIS, браузер,
 shell в контейнере), а результат до выдачи проходит кросс-ревью и
 adversarial-проверку. Всё — на consumer-железе: ансамбль 30B-моделей уживается
-в 8 ГБ VRAM thanks to VRAM-арбитру.
+в 8 ГБ VRAM + 32 ГБ RAM thanks to VRAM-арбитру (тяжёлые модели выгружают
+экспертов в RAM).
 
 Конкурентоспособно с облачными агентами на публичных бенчмарках
 (Terminal-Bench, GAIA — см. таблицу ниже), при этом бесплатно и приватно.
@@ -54,15 +55,37 @@ adversarial-проверку. Всё — на consumer-железе: ансам�
 Требования: Windows (проверено) или Linux, Python 3.10+, [Ollama](https://ollama.com);
 для контейнерного инструмента — Docker.
 
+### Модели
+
+**Обязательные** (маленькие, нужны для старта любой задачи):
+
+```bash
+ollama pull qwen2.5:3b-instruct   # роутер + secretary (~2 ГБ)
+ollama pull bge-m3:latest          # эмбеддинги базы знаний (~1.2 ГБ)
+```
+
+**Опциональные** (ансамбль для orchestrated/team режимов — выберите под своё
+железо, полные аналоги в `config/models.example.yaml`):
+
+```bash
+ollama pull glm-4.7-flash          # proposer/executor
+ollama pull nemotron-3.5-lightning:30b-a3b-q4_K_M
+# 35B+ модели — через llama.cpp (llama-server), см. notes в models.example.yaml
+```
+
+Минимальный старт: только две обязательные модели — платформа работает в
+simple-режиме и с базой знаний. VRAM-арбитр сам разрулит, кто когда в GPU.
+
+Windows-пользователям: `install_models.bat` в корне репозитория скачает всё
+необходимое одной командой (double-click).
+
+### Установка
+
 ```bash
 git clone <repo-url> localis
 cd localis
 python -m venv .venv
 .venv/Scripts/pip install -r requirements.txt   # Linux: .venv/bin/pip
-
-# скачать модели в Ollama (пример):
-ollama pull qwen2.5:3b-instruct
-ollama pull glm-4.7-flash    # или любые другие, см. config/models.example.yaml
 
 # настроить конфиг:
 copy config\models.example.yaml config\models.yaml   # Linux: cp ...
