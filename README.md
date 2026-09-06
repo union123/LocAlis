@@ -130,6 +130,6 @@ VRAM-арбитр + телеметрия), `core/blackboard.py` (SQLite-журн
 
 ## Статус
 
-Research preview. Работает на машине автора (RTX 3070 8GB, Windows); установка
+Research preview. Работает на машине автора (RTX 3070 8GB VRAM, 40 GB RAM, Windows); установка
 на других конфигурациях требует правки `config/models.yaml` под своё железо.
 Issues приветствуются.
