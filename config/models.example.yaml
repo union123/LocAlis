@@ -88,6 +88,7 @@ proposers:
     think: false
     extra:
       base_url: "http://127.0.0.1:8081"
+      no_think: true   # thinking models burn the whole budget on reasoning; gateway adds enable_thinking=false + /no_think
       server_model: "ornith15"
   - id: "proposer_c"
     provider: ollama
@@ -124,7 +125,8 @@ lead_agent_extra:
     enabled: true
     supports_tools: true
     extra:
-      base_url: "http://127.0.0.1:8081"      # llama-server endpoint (8080 занят панелью)
+      base_url: "http://127.0.0.1:8081"
+      no_think: true   # thinking models burn the whole budget on reasoning; gateway adds enable_thinking=false + /no_think      # llama-server endpoint (8080 занят панелью)
       server_model: "qwen3-coder-next"       # --alias при старте llama-server
     notes: >-
       SWE-bench Verified 71.3% (лучше glm-flash 59.2), контекст до 64K
