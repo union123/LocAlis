@@ -2,7 +2,7 @@
 
 > **Локальная мультиагентная платформа: три модели спорят над планом, исполняют его инструментами и проверяют друг друга — всё на вашем ноутбуке, без облака.**
 
-![local](https://img.shields.io/badge/100%25-local-no_cloud_data_sent-success) ![multi-model](https://img.shields.io/badge/multi--model-3%2B%20proposers-blue) ![tools](https://img.shields.io/badge/tools-11%2B%20built--in-orange) ![license](https://img.shields.io/badge/license-TBD-lightgrey)
+![local](https://img.shields.io/badge/100%25-local-no_cloud_data_sent-success) ![multi-model](https://img.shields.io/badge/multi--model-3%2B%20proposers-blue) ![tools](https://img.shields.io/badge/tools-11%2B%20built--in-orange) ![license](https://img.shields.io/badge/license-MIT-blue)
 
 ```
 Задача → Router → Secretary (контекст)
