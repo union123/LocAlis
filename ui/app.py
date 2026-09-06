@@ -256,6 +256,8 @@ def _is_domain_tool(entry: Any) -> bool:
 @ui.page("/")
 def page_dashboard():
     layout("/")
+    if welcome.is_first_run():
+        welcome.open_about()
     page_title("Панель управления",
                "Состояние платформы: режим, облако, модели, инструменты, задачи")
     container = ui.column().classes("w-full gap-4")
