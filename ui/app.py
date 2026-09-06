@@ -25,6 +25,7 @@ from nicegui import ui
 from ui.icons import icon as _icon, icon_svg as _icon_svg
 from ui.state import STATE
 from ui import welcome
+from ui import i18n
 
 UI_VERSION = "1.2"
 ROOT = Path(__file__).resolve().parent.parent
@@ -61,6 +62,9 @@ PAGES: list[tuple[str, str, str]] = [
     ("/settings", "Настройки", "tune"),
     ("/changelog", "Журнал изменений", "receipt_long"),
 ]
+
+# Перевод названий экранов делается в layout() через i18n.t на каждом рендере
+# (язык можно переключить без перезапуска).
 
 # Единая палитра. Тёмный графитовый фон + спокойный индиго-акцент:
 # панель смотрят подолгу, наблюдая за ходом выполнения, поэтому яркий
@@ -187,8 +191,13 @@ def layout(active: str):
                 ui.label(APP_NAME).classes("text-lg font-bold tracking-wide")
                 ui.label(APP_TAGLINE).classes("ap-muted")
         with ui.row().classes("items-center gap-3"):
+            lang = i18n._lang()
+            ui.button(("EN" if lang == "ru" else "RU"),
+                      on_click=lambda: (i18n.set_lang("en" if lang == "ru" else "ru"),
+                                        ui.navigate.to("/"))).props(
+                "flat dense size=sm").tooltip("Language / Язык")
             ui.button(icon="help_outline", on_click=lambda: welcome.open_about()).props(
-                "flat round dense size=sm").tooltip("About / setup")
+                "flat round dense size=sm").tooltip("О платформе / setup")
             _header_status()
             ui.label(f"v{UI_VERSION}").classes("ap-muted")
 
@@ -198,7 +207,7 @@ def layout(active: str):
             css = "ap-nav ap-nav-active" if path == active else "ap-nav"
             with ui.link(target=path).classes(css).style("width:100%"):
                 _icon(icon).classes("text-lg")
-                ui.label(title)
+                ui.label(i18n.t(title))
     return drawer
 
 
@@ -212,15 +221,15 @@ def _header_status() -> None:
     try:
         platform = STATE.platform
         status = platform.mode_controller.status()
-        mode_text = ("локальный режим" if status.mode == "local_only"
+        mode_text = i18n.t("локальный режим" if status.mode == "local_only"
                      else "локально + облако")
         ui.html(f'<span class="ap-chip">{_icon_svg("node")} {mode_text}</span>')
         color = "#3fb98c" if status.allowed else "#9aa3bd"
-        cloud_text = "облако доступно" if status.allowed else "облако отключено"
+        cloud_text = i18n.t("облако доступно" if status.allowed else "облако отключено")
         cloud_icon = _icon_svg("cloud_done" if status.allowed else "cloud_off")
         ui.html(f'<span class="ap-chip" style="color:{color}">{cloud_icon} {cloud_text}</span>')
     except Exception:  # noqa: BLE001 — шапка не должна ронять страницу
-        ui.html('<span class="ap-chip">состояние неизвестно</span>')
+        ui.html(f'<span class="ap-chip">{i18n.t("состояние неизвестно")}</span>')
 
 
 def page_title(text: str, hint: str = "") -> None:
@@ -256,10 +265,10 @@ def _is_domain_tool(entry: Any) -> bool:
 @ui.page("/")
 def page_dashboard():
     layout("/")
+    page_title(i18n.t("Панель управления"),
+               i18n.t("Состояние платформы: режим, облако, модели, инструменты, задачи"))
     if welcome.is_first_run():
         welcome.open_about()
-    page_title("Панель управления",
-               "Состояние платформы: режим, облако, модели, инструменты, задачи")
     container = ui.column().classes("w-full gap-4")
 
     def kpi(title: str, value: str, hint: str = "", icon: str = "",
@@ -454,7 +463,7 @@ def page_new_task():
             # Пусто = без ограничения (статический allowed_roots инструментов).
             allowed_roots_input = ui.input(
                 "Папки, куда разрешено писать (через ; , пусто = без ограничения)",
-                placeholder=r"C:\path\to\workspace",
+                placeholder=r"C:\Users\mgosh\agent-platform\site_calisthenics",
             ).classes("w-full").props("outlined dense")
 
             with lead_box:
