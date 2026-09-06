@@ -52,15 +52,15 @@ _LOGO_SVG = """
 # Названия экранов — единственное место, где задаётся меню.
 # Третий элемент — иконка Material: раньше она объявлялась, но не рисовалась.
 PAGES: list[tuple[str, str, str]] = [
-    ("/", "Панель управления", "space_dashboard"),
-    ("/new", "Новая задача", "add_circle"),
-    ("/run", "Ход выполнения", "timeline"),
-    ("/history", "История задач", "history"),
-    ("/knowledge", "База знаний", "auto_stories"),
-    ("/tools", "Инструменты", "extension"),
-    ("/secrets", "Ключи доступа", "vpn_key"),
-    ("/settings", "Настройки", "tune"),
-    ("/changelog", "Журнал изменений", "receipt_long"),
+    ("/", i18n.t("Панель управления"), "space_dashboard"),
+    ("/new", i18n.t("Новая задача"), "add_circle"),
+    ("/run", i18n.t("Ход выполнения"), "timeline"),
+    ("/history", i18n.t("История задач"), "history"),
+    ("/knowledge", i18n.t("База знаний"), "auto_stories"),
+    ("/tools", i18n.t("Инструменты"), "extension"),
+    ("/secrets", i18n.t("Ключи доступа"), "vpn_key"),
+    ("/settings", i18n.t("Настройки"), "tune"),
+    ("/changelog", i18n.t("Журнал изменений"), "receipt_long"),
 ]
 
 # Перевод названий экранов делается в layout() через i18n.t на каждом рендере
@@ -137,43 +137,43 @@ body { background: #161923; color: var(--ap-text); }
 
 
 _NODE_RU = {
-    "router": "Маршрутизатор",
-    "retrieval": "Поиск по базе знаний",
-    "secretary": "Секретарь (сводка контекста)",
-    "proposers": "Исполнители (3 модели)",
-    "verifier": "Проверяющий (голосование 2 из 3)",
-    "judge": "Арбитр",
-    "orchestrator": "Оркестратор (план и шаги)",
-    "secretary_persist": "Секретарь (запись результата)",
+    "router": i18n.t("Маршрутизатор"),
+    "retrieval": i18n.t("Поиск по базе знаний"),
+    "secretary": i18n.t("Секретарь (сводка контекста)"),
+    "proposers": i18n.t("Исполнители (3 модели)"),
+    "verifier": i18n.t("Проверяющий (голосование 2 из 3)"),
+    "judge": i18n.t("Арбитр"),
+    "orchestrator": i18n.t("Оркестратор (план и шаги)"),
+    "secretary_persist": i18n.t("Секретарь (запись результата)"),
 }
 
 _MODE_RU = {
-    "auto": "автоматический",
-    "local_only": "строго локальный",
-    "orchestrated": "оркестратор",
+    "auto": i18n.t("автоматический"),
+    "local_only": i18n.t("строго локальный"),
+    "orchestrated": i18n.t("оркестратор"),
 }
 
-_PLACEMENT_RU = {"cloud": "облачный планировщик", "local": "локальный планировщик",
-                 "auto": "планировщик выбирается автоматически"}
+_PLACEMENT_RU = {"cloud": i18n.t("облачный планировщик"), "local": i18n.t("локальный планировщик"),
+                 "auto": i18n.t("планировщик выбирается автоматически")}
 
 # Кто принял итоговое решение — техническое значение переводим в понятное
 _DECIDED_RU = {
-    "verifier_consensus": "согласие исполнителей (2 из 3)",
-    "judge_cloud": "облачный арбитр",
-    "judge_local": "локальный арбитр",
-    "orchestrator_cloud": "оркестратор (облачная сборка)",
-    "orchestrator_local": "оркестратор (локальная сборка)",
-    "simple_orchestrated": "один исполнитель (SIMPLE)",
-    "fallback": "резервный путь",
+    "verifier_consensus": i18n.t("согласие исполнителей (2 из 3)"),
+    "judge_cloud": i18n.t("облачный арбитр"),
+    "judge_local": i18n.t("локальный арбитр"),
+    "orchestrator_cloud": i18n.t("оркестратор (облачная сборка)"),
+    "orchestrator_local": i18n.t("оркестратор (локальная сборка)"),
+    "simple_orchestrated": i18n.t("один исполнитель (SIMPLE)"),
+    "fallback": i18n.t("резервный путь"),
 }
 
 # Состояние шага -> (значок, цвет, подпись)
 # Состояние шага -> (значок, цвет, подпись, класс полосы слева)
 _STEP_STATE = {
-    "waiting": ("schedule", "text-grey-6", "ожидает", ""),
-    "running": ("autorenew", "text-info", "выполняется", "ap-step-run"),
-    "done": ("check_circle", "text-positive", "готово", "ap-step-ok"),
-    "failed": ("error", "text-negative", "сбой", "ap-step-bad"),
+    "waiting": ("schedule", "text-grey-6", i18n.t("ожидает"), ""),
+    "running": ("autorenew", "text-info", i18n.t("выполняется"), "ap-step-run"),
+    "done": ("check_circle", "text-positive", i18n.t("готово"), "ap-step-ok"),
+    "failed": ("error", "text-negative", i18n.t("сбой"), "ap-step-bad"),
 }
 
 
@@ -195,9 +195,9 @@ def layout(active: str):
             ui.button(("EN" if lang == "ru" else "RU"),
                       on_click=lambda: (i18n.set_lang("en" if lang == "ru" else "ru"),
                                         ui.navigate.to("/"))).props(
-                "flat dense size=sm").tooltip("Language / Язык")
+                "flat dense size=sm").tooltip(i18n.t("Language / Язык"))
             ui.button(icon="help_outline", on_click=lambda: welcome.open_about()).props(
-                "flat round dense size=sm").tooltip("О платформе / setup")
+                "flat round dense size=sm").tooltip(i18n.t("О платформе / setup"))
             _header_status()
             ui.label(f"v{UI_VERSION}").classes("ap-muted")
 
@@ -221,15 +221,15 @@ def _header_status() -> None:
     try:
         platform = STATE.platform
         status = platform.mode_controller.status()
-        mode_text = i18n.t("локальный режим" if status.mode == "local_only"
-                     else "локально + облако")
+        mode_text = i18n.t(i18n.t("локальный режим") if status.mode == "local_only"
+                     else i18n.t("локально + облако"))
         ui.html(f'<span class="ap-chip">{_icon_svg("node")} {mode_text}</span>')
         color = "#3fb98c" if status.allowed else "#9aa3bd"
-        cloud_text = i18n.t("облако доступно" if status.allowed else "облако отключено")
+        cloud_text = i18n.t(i18n.t("облако доступно") if status.allowed else i18n.t("облако отключено"))
         cloud_icon = _icon_svg("cloud_done" if status.allowed else "cloud_off")
         ui.html(f'<span class="ap-chip" style="color:{color}">{cloud_icon} {cloud_text}</span>')
     except Exception:  # noqa: BLE001 — шапка не должна ронять страницу
-        ui.html(f'<span class="ap-chip">{i18n.t("состояние неизвестно")}</span>')
+        ui.html(f'<span class="ap-chip">{i18n.t(i18n.t("состояние неизвестно"))}</span>')
 
 
 def page_title(text: str, hint: str = "") -> None:
@@ -265,8 +265,8 @@ def _is_domain_tool(entry: Any) -> bool:
 @ui.page("/")
 def page_dashboard():
     layout("/")
-    page_title(i18n.t("Панель управления"),
-               i18n.t("Состояние платформы: режим, облако, модели, инструменты, задачи"))
+    page_title(i18n.t(i18n.t("Панель управления")),
+               i18n.t(i18n.t("Состояние платформы: режим, облако, модели, инструменты, задачи")))
     if welcome.is_first_run():
         welcome.open_about()
     container = ui.column().classes("w-full gap-4")
@@ -299,53 +299,53 @@ def page_dashboard():
             # --- верхний ряд: главные показатели ---------------------------
             with ui.row().classes("w-full gap-4 items-stretch"):
                 default_mode = str(platform.settings.get("mode", "auto"))
-                kpi("Режим работы",
-                    "Локальный" if status.mode == "local_only" else "Локально + облако",
+                kpi(i18n.t("Режим работы"),
+                    i18n.t("Локальный") if status.mode == "local_only" else i18n.t("Локально + облако"),
                     f"по умолчанию: {_MODE_RU.get(default_mode, default_mode)}",
                     "shield_moon" if status.mode == "local_only" else "public")
-                kpi("Облачные модели",
-                    "Доступны" if status.allowed else "Недоступны",
+                kpi(i18n.t("Облачные модели"),
+                    i18n.t("Доступны") if status.allowed else i18n.t("Недоступны"),
                     status.reason[:60], "cloud_done" if status.allowed else "cloud_off",
                     "text-positive" if status.allowed else "text-warning")
-                kpi("Задачи всего", str(stats["tasks_total"]),
+                kpi(i18n.t("Задачи всего"), str(stats["tasks_total"]),
                     ", ".join(f"{k}: {v}" for k, v in stats["by_status"].items()) or "—",
                     "assignment", "text-info", value_mono=True, hint_mono=True)
                 ready = len(platform.registry.available())
-                kpi("Инструменты", f"{ready} / {len(platform.registry.entries)}",
-                    "готовы к работе", "extension", "text-accent", value_mono=True)
+                kpi(i18n.t("Инструменты"), f"{ready} / {len(platform.registry.entries)}",
+                    i18n.t("готовы к работе"), "extension", "text-accent", value_mono=True)
 
             # --- второй ряд: устойчивость и модели -------------------------
             with ui.row().classes("w-full gap-4 items-stretch"):
                 with ui.column().classes("ap-card gap-2").style("min-width:320px; flex:1"):
                     with ui.row().classes("items-center gap-2"):
                         _icon("electric_bolt").classes("text-warning")
-                        ui.label(i18n.t("Защита от сбоев облака")).classes("ap-h2")
-                    state_ru = {"closed": "замкнут — норма",
-                                "open": "разомкнут — облако отключено",
-                                "half-open": "проверка соединения"}
+                        ui.label(i18n.t(i18n.t("Защита от сбоев облака"))).classes("ap-h2")
+                    state_ru = {"closed": i18n.t("замкнут — норма"),
+                                "open": i18n.t("разомкнут — облако отключено"),
+                                "half-open": i18n.t("проверка соединения")}
                     ui.label(state_ru.get(status.breaker_state, status.breaker_state)
                              ).classes("text-sm")
                     ui.label(f"сбоев подряд: {status.fail_counter}").classes("ap-muted ap-mono")
                     with ui.row().classes("gap-2 mt-1"):
-                        ui.button("Сбросить", icon="restart_alt", on_click=lambda: (
+                        ui.button(i18n.t("Сбросить"), icon="restart_alt", on_click=lambda: (
                             platform.mode_controller.reset_breaker(), refresh(),
-                            ui.notify("Защита сброшена", type="positive"))
+                            ui.notify(i18n.t("Защита сброшена"), type="positive"))
                                   ).props("size=sm outline")
-                        ui.button("Отключить облако", icon="cloud_off", on_click=lambda: (
+                        ui.button(i18n.t("Отключить облако"), icon="cloud_off", on_click=lambda: (
                             platform.mode_controller.open_breaker(), refresh(),
-                            ui.notify("Облако принудительно отключено", type="warning"))
+                            ui.notify(i18n.t("Облако принудительно отключено"), type="warning"))
                                   ).props("size=sm outline color=warning")
 
                 with ui.column().classes("ap-card gap-2").style("min-width:320px; flex:1"):
                     with ui.row().classes("items-center gap-2"):
                         _icon("smart_toy").classes("text-primary")
-                        ui.label(i18n.t("Роли и модели")).classes("ap-h2")
+                        ui.label(i18n.t(i18n.t("Роли и модели"))).classes("ap-h2")
                     try:
                         roles = [
-                            ("Маршрутизатор", platform.gateway.spec("router").model),
-                            ("Планировщик", platform.gateway.orchestrator_spec().model),
-                            ("Проверяющий", platform.gateway.spec("verifier").model),
-                            ("Арбитр локальный", platform.gateway.judge_specs()[1].model),
+                            (i18n.t("Маршрутизатор"), platform.gateway.spec("router").model),
+                            (i18n.t("Планировщик"), platform.gateway.orchestrator_spec().model),
+                            (i18n.t("Проверяющий"), platform.gateway.spec("verifier").model),
+                            (i18n.t("Арбитр локальный"), platform.gateway.judge_specs()[1].model),
                         ]
                         for title, model in roles:
                             with ui.row().classes("items-center justify-between w-full"):
@@ -364,10 +364,10 @@ def page_dashboard():
                 with ui.column().classes("ap-card gap-2").style("min-width:320px; flex:1"):
                     with ui.row().classes("items-center gap-2"):
                         _icon("memory").classes("text-info")
-                        ui.label(i18n.t("Локальные модели (Ollama)")).classes("ap-h2")
+                        ui.label(i18n.t(i18n.t("Локальные модели (Ollama)"))).classes("ap-h2")
                     models = platform.gateway.local_models_available()
                     if not models:
-                        ui.label(i18n.t("Ollama не отвечает — проверьте, запущен ли сервис"))                                 .classes("text-negative text-sm")
+                        ui.label(i18n.t(i18n.t("Ollama не отвечает — проверьте, запущен ли сервис")))                                 .classes("text-negative text-sm")
                     for name, present in models.items():
                         with ui.row().classes("items-center gap-2"):
                             _icon("check_circle" if present else "cancel").classes(
@@ -377,10 +377,10 @@ def page_dashboard():
                 with ui.column().classes("ap-card gap-2").style("min-width:320px; flex:1"):
                     with ui.row().classes("items-center gap-2"):
                         _icon("insights").classes("text-accent")
-                        ui.label(i18n.t("Использование инструментов")).classes("ap-h2")
+                        ui.label(i18n.t(i18n.t("Использование инструментов"))).classes("ap-h2")
                     usage = stats["tool_usage"]
                     if not usage:
-                        ui.label(i18n.t("Инструменты пока не вызывались")).classes("ap-muted")
+                        ui.label(i18n.t(i18n.t("Инструменты пока не вызывались"))).classes("ap-muted")
                     for item in usage:
                         share = item["ok"] / item["calls"] if item["calls"] else 0
                         with ui.column().classes("gap-0 w-full"):
@@ -392,7 +392,7 @@ def page_dashboard():
                                                size="6px").classes("w-full")
 
             # --- версии: техническая информация, прячем в раскрытие -------
-            with ui.expansion("Версии компонентов", icon="info").classes(
+            with ui.expansion(i18n.t("Версии компонентов"), icon="info").classes(
                     "w-full ap-card-soft"):
                 from core.blackboard import BLACKBOARD_VERSION
                 from core.tool_registry import REGISTRY_VERSION
@@ -405,8 +405,8 @@ def page_dashboard():
 
     refresh()
     with ui.row().classes("mt-4 gap-2"):
-        ui.button("Обновить", icon="refresh", on_click=refresh).props("color=primary")
-        ui.button("Новая задача", icon="add_circle",
+        ui.button(i18n.t("Обновить"), icon="refresh", on_click=refresh).props("color=primary")
+        ui.button(i18n.t("Новая задача"), icon="add_circle",
                   on_click=lambda: ui.navigate.to("/new")).props("outline")
 
 
@@ -418,7 +418,7 @@ def page_dashboard():
 @ui.page("/new")
 def page_new_task():
     layout("/new")
-    page_title(i18n.t("Новая задача"), i18n.t("Опишите задачу и выберите, как её выполнять"))
+    page_title(i18n.t(i18n.t("Новая задача")), i18n.t(i18n.t("Опишите задачу и выберите, как её выполнять")))
     platform = STATE.platform
 
     # Пересканируем при открытии: плагин могли добавить или включить
@@ -430,7 +430,7 @@ def page_new_task():
 
     with ui.column().classes("w-full gap-4").style("max-width:1000px"):
         with ui.column().classes("ap-card gap-2 w-full"):
-            ui.label(i18n.t("Что нужно сделать")).classes("ap-h2")
+            ui.label(i18n.t(i18n.t("Что нужно сделать"))).classes("ap-h2")
             prompt = ui.textarea(
                 placeholder="Например: прочитай введение.txt на рабочем столе, "
                             "посчитай строки и сохрани сводку в Excel",
@@ -439,13 +439,13 @@ def page_new_task():
                 # Готовые формулировки: быстрее, чем печатать, и заодно
                 # показывают, что платформа вообще умеет
                 for label, text in (
-                    ("Прочитать файл", "Прочитай файл введение.txt на моём рабочем столе "
+                    (i18n.t("Прочитать файл"), "Прочитай файл введение.txt на моём рабочем столе "
                                        "и кратко опиши содержание"),
-                    ("Составной отчёт", "Прочитай введение.txt на рабочем столе, посчитай "
+                    (i18n.t("Составной отчёт"), "Прочитай введение.txt на рабочем столе, посчитай "
                                         "строки и сохрани сводку в Excel на рабочий стол"),
-                    ("График", "Посчитай сколько файлов каждого типа на рабочем столе "
+                    (i18n.t("График"), "Посчитай сколько файлов каждого типа на рабочем столе "
                                "и построй столбчатую диаграмму"),
-                    ("Геообработка", "Построй буфер 100 метров вокруг слоя "
+                    (i18n.t("Геообработка"), "Построй буфер 100 метров вокруг слоя "
                                      "POLIGON TEST 2.shp и сохрани результат"),
                 ):
                     ui.button(label, on_click=lambda t=text: prompt.set_value(t)
@@ -453,7 +453,7 @@ def page_new_task():
 
         # --- выбор режима карточками ------------------------------------
         with ui.column().classes("ap-card gap-3 w-full"):
-            ui.label(i18n.t("Как выполнять")).classes("ap-h2")
+            ui.label(i18n.t(i18n.t("Как выполнять"))).classes("ap-h2")
             mode_cards: dict[str, Any] = {}
             planner_box = ui.column().classes("gap-2 w-full")
             lead_box = ui.column().classes("gap-2 w-full")
@@ -461,18 +461,18 @@ def page_new_task():
             # Разрешённые папки записи (allowed_roots): песочница для задачи.
             # Пусто = без ограничения (статический allowed_roots инструментов).
             allowed_roots_input = ui.input(
-                "Папки, куда разрешено писать (через ; , пусто = без ограничения)",
+                i18n.t("Папки, куда разрешено писать (через ; , пусто = без ограничения)"),
                 placeholder=r"C:\Users\mgosh\agent-platform\site_calisthenics",
             ).classes("w-full").props("outlined dense")
 
             with lead_box:
                 ui.separator().style("background:#2f3548")
                 meeting_rounds_select = ui.select(
-                    {0: "Без совещания (обычный Lead Agent)",
-                     1: "1 раунд — модели предлагают планы, арбитр сводит",
-                     2: "2 раунда — обмен планами + улучшение",
-                     3: "3 раунда — максимальная проработка"},
-                    value=0, label="Раунды совещания команды",
+                    {0: i18n.t("Без совещания (обычный Lead Agent)"),
+                     1: i18n.t("1 раунд — модели предлагают планы, арбитр сводит"),
+                     2: i18n.t("2 раунда — обмен планами + улучшение"),
+                     3: i18n.t("3 раунда — максимальная проработка")},
+                    value=0, label=i18n.t("Раунды совещания команды"),
                     on_change=lambda e: on_meeting_rounds_change(e.value),
                 ).classes("w-full").props("outlined dense")
                 ui.label(i18n.t("Совещание: все модели предлагают планы, видят планы "
@@ -488,10 +488,10 @@ def page_new_task():
                     lead_model_select = ui.select(
                         {s.model: s.model for s in lead_specs},
                         value=(lead_specs[0].model if lead_specs else ""),
-                        label="Lead-исполнитель (кто выполняет задачу)",
+                        label=i18n.t("Lead-исполнитель (кто выполняет задачу)"),
                     ).classes("w-full").props("outlined dense")
                     lead_ctx_number = ui.number(
-                        "Контекст Lead-исполнителя, токенов",
+                        i18n.t("Контекст Lead-исполнителя, токенов"),
                         value=32768, min=4096, max=131072, precision=0,
                     ).classes("w-full").props("outlined dense")
                     ui.label(i18n.t("Больше контекст = больше VRAM под KV-кеш. 128K — "
@@ -528,13 +528,13 @@ def page_new_task():
 
             with ui.row().classes("w-full gap-3 items-stretch"):
                 for value, title, icon, description in (
-                    ("auto", "Автоматический", "groups",
+                    ("auto", i18n.t("Автоматический"), "groups",
                      "Три модели отвечают независимо, голосование 2 из 3, "
                      "арбитр при расхождении. Надёжно для одиночных вопросов."),
-                    ("local_only", "Строго локальный", "shield_moon",
+                    ("local_only", i18n.t("Строго локальный"), "shield_moon",
                      "То же, но облако не используется никогда. "
                      "Для непубличных данных."),
-                    ("orchestrated", "Оркестратор", "account_tree",
+                    ("orchestrated", i18n.t("Оркестратор"), "account_tree",
                      "Lead Agent: один сильный исполнитель делает задачу "
                      "целиком с полным контекстом. Планировщик LLM не "
                      "используется. Для составных многофайловых задач."),
@@ -556,12 +556,12 @@ def page_new_task():
                     "Настройки ниже относятся к резервному многошаговому режиму "
                     "(флаг lead_agent выключен в Настройках).")).classes("ap-muted")
                 planner = ui.select(
-                    {"auto": "Автоматически — облако при доступности",
-                     "cloud": "Облачный планировщик — сильнее планирует",
-                     "local": "Локальный планировщик — ничего не уходит в сеть"},
+                    {"auto": i18n.t("Автоматически — облако при доступности"),
+                     "cloud": i18n.t("Облачный планировщик — сильнее планирует"),
+                     "local": i18n.t("Локальный планировщик — ничего не уходит в сеть")},
                     value=str((platform.settings.get("orchestrator") or {}).get(
                         "placement", "auto")),
-                    label="Где работает планировщик (резервный режим)",
+                    label=i18n.t("Где работает планировщик (резервный режим)"),
                 ).classes("w-full").props("outlined dense")
 
                 # Выбор локального планировщика: от него зависит, дойдёт ли
@@ -581,7 +581,7 @@ def page_new_task():
                 for pspec in platform.gateway.proposer_specs():
                     if pspec.model not in candidate_models:
                         candidates.append(pspec)
-                planner_options = {"": f"По умолчанию — {default_planner or 'из конфига'}"}
+                planner_options = {"": f"По умолчанию — {default_planner or i18n.t('из конфига')}"}
                 for spec in candidates:
                     planner_options[spec.model] = str(
                         spec.extra.get("label") or spec.model)
@@ -590,7 +590,7 @@ def page_new_task():
                 planner_model = ui.select(
                     planner_options,
                     value=saved_planner if saved_planner in planner_options else "",
-                    label="Модель планировщика (резервный многошаговый режим)",
+                    label=i18n.t("Модель планировщика (резервный многошаговый режим)"),
                 ).classes("w-full").props("outlined dense")
                 with ui.row().classes("items-start gap-2"):
                     _icon("info").classes("text-primary text-sm mt-1")
@@ -610,14 +610,14 @@ def page_new_task():
 
         # --- инструменты ------------------------------------------------
         with ui.column().classes("ap-card gap-2 w-full"):
-            ui.label(i18n.t("Инструменты")).classes("ap-h2")
+            ui.label(i18n.t(i18n.t("Инструменты"))).classes("ap-h2")
             ready = platform.registry.available()
             options = {
                 entry.name: f"{entry.name} — {(entry.manifest.description or '')[:60]}"
                 for entry in ready
             }
             tools = ui.select(options, multiple=True,
-                              label="Оставьте пустым, чтобы разрешить все готовые",
+                              label=i18n.t("Оставьте пустым, чтобы разрешить все готовые"),
                               value=[]).classes("w-full").props("outlined dense")
             with ui.row().classes("gap-2 flex-wrap"):
                 for entry in ready:
@@ -625,7 +625,7 @@ def page_new_task():
                             f'✓ {entry.name} <span class="ap-mono">v{entry.manifest.version}'
                             f'</span></span>')
                     if _is_domain_tool(entry):
-                        ui.html('<span class="ap-chip ap-chip-domain">геодомен</span>')
+                        ui.html(i18n.t('<span class="ap-chip ap-chip-domain">геодомен</span>'))
             if not options:
                 ui.label(i18n.t("Готовых инструментов нет — откройте экран «Инструменты», "
                          "там видна причина.")).classes("text-warning text-xs")
@@ -639,7 +639,7 @@ def page_new_task():
         def start():
             text = (prompt.value or "").strip()
             if not text:
-                ui.notify("Введите описание задачи", type="warning")
+                ui.notify(i18n.t("Введите описание задачи"), type="warning")
                 return
             mode_value = selected_mode["value"]
             selected = list(tools.value or []) or None
@@ -703,7 +703,7 @@ def page_new_task():
             threading.Thread(target=worker, daemon=True).start()
             ui.navigate.to("/run")
 
-        ui.button("Запустить задачу", icon="play_arrow", on_click=start).props(
+        ui.button(i18n.t("Запустить задачу"), icon="play_arrow", on_click=start).props(
             "color=primary size=lg")
 
 
@@ -724,7 +724,7 @@ def render_plan_panel(log, task_id: str = "", on_rerun=None) -> None:
     with ui.column().classes("ap-card gap-2 w-full"):
         with ui.row().classes("items-center gap-2 w-full"):
             _icon("account_tree").classes("text-primary")
-            ui.label(i18n.t("План оркестратора")).classes("ap-h2")
+            ui.label(i18n.t(i18n.t("План оркестратора"))).classes("ap-h2")
             ui.space()
             if log.plan_model:
                 ui.html(f'<span class="ap-chip">🧠 {log.plan_model}</span>')
@@ -759,7 +759,7 @@ def render_plan_panel(log, task_id: str = "", on_rerun=None) -> None:
                 str(step.get("state")), _STEP_STATE["waiting"])
             # Шаг «готов», но к нему есть вопросы -> жёлтая полоса, не зелёная
             if step.get("warnings") and step.get("state") == "done":
-                bar, caption, color = "ap-step-warn", "готово, есть вопросы", "text-warning"
+                bar, caption, color = "ap-step-warn", i18n.t("готово, есть вопросы"), "text-warning"
             with ui.row().classes(f"items-start gap-3 w-full ap-step {bar} py-1"):
                 _icon(icon).classes(f"{color} mt-1")
                 with ui.column().classes("gap-0 grow"):
@@ -769,9 +769,9 @@ def render_plan_panel(log, task_id: str = "", on_rerun=None) -> None:
                     if step.get("model"):
                         meta.append(str(step["model"]))
                     if step.get("tools"):
-                        meta.append("инструменты: " + ", ".join(step["tools"]))
+                        meta.append(i18n.t("инструменты: ") + ", ".join(step["tools"]))
                     if step.get("depends_on"):
-                        meta.append("после " + ", ".join(step["depends_on"]))
+                        meta.append(i18n.t("после ") + ", ".join(step["depends_on"]))
                     if step.get("ms"):
                         meta.append(f"{step['ms']} мс")
                     ui.label(" · ".join(meta)).classes("ap-muted")
@@ -789,14 +789,14 @@ def render_plan_panel(log, task_id: str = "", on_rerun=None) -> None:
                     if on_rerun and step.get("state") in ("done", "failed"):
                         ui.button(icon="replay",
                                   on_click=lambda s=step: on_rerun(s)).props(
-                            "size=sm flat dense color=primary").tooltip("Повторить шаг")
+                            "size=sm flat dense color=primary").tooltip(i18n.t("Повторить шаг"))
 
 
 
 @ui.page("/run")
 def page_run():
     layout("/run")
-    page_title(i18n.t("Ход выполнения"), i18n.t("Что делает платформа прямо сейчас"))
+    page_title(i18n.t(i18n.t("Ход выполнения")), i18n.t(i18n.t("Что делает платформа прямо сейчас")))
     header = ui.column().classes("w-full gap-3")
 
     # Аварийный стоп выполняющейся задачи (24.08): пишет флаг-файл, который
@@ -807,7 +807,7 @@ def page_run():
         ui.notify("Стоп запрошен: текущий вызов модели доиграет, "
                   "затем задача остановится", type="warning")
 
-    ui.button("Остановить задачу", icon="stop_circle", on_click=stop_task).props(
+    ui.button(i18n.t("Остановить задачу"), icon="stop_circle", on_click=stop_task).props(
         "color=negative outline size=md")
 
     steps = ui.column().classes("w-full gap-0 ap-card ap-log").style("max-height:44vh; overflow:auto")
@@ -827,10 +827,10 @@ def page_run():
             if not log.prompt:
                 with ui.column().classes("ap-card items-center gap-2 w-full py-8"):
                     _icon("science").classes("text-4xl text-primary")
-                    ui.label(i18n.t("Задача ещё не запускалась")).classes("ap-h2")
+                    ui.label(i18n.t(i18n.t("Задача ещё не запускалась"))).classes("ap-h2")
                     ui.label(i18n.t("Откройте «Новая задача», опишите, что нужно сделать, "
                              "и здесь появится ход выполнения.")).classes("ap-muted")
-                    ui.button("Новая задача", icon="add_circle",
+                    ui.button(i18n.t("Новая задача"), icon="add_circle",
                               on_click=lambda: ui.navigate.to("/new")).props("color=primary")
                 return
             with ui.column().classes("ap-card gap-2 w-full"):
@@ -838,16 +838,16 @@ def page_run():
                     if log.running:
                         ui.spinner(size="sm", color="primary")
                         ui.label(_NODE_RU.get(log.current_node, log.current_node)
-                                 or "Выполняется…").classes("ap-h2")
+                                 or i18n.t("Выполняется…")).classes("ap-h2")
                     elif log.error:
                         _icon("error").classes("text-negative text-xl")
-                        ui.label(i18n.t("Завершено с ошибкой")).classes("ap-h2 text-negative")
+                        ui.label(i18n.t(i18n.t("Завершено с ошибкой"))).classes("ap-h2 text-negative")
                     elif log.finished:
                         _icon("check_circle").classes("text-positive text-xl")
-                        ui.label(i18n.t("Задача выполнена")).classes("ap-h2 text-positive")
+                        ui.label(i18n.t(i18n.t("Задача выполнена"))).classes("ap-h2 text-positive")
                     else:
                         _icon("hourglass_empty").classes("text-warning text-xl")
-                        ui.label(i18n.t("Задача поставлена в очередь")).classes(
+                        ui.label(i18n.t(i18n.t("Задача поставлена в очередь"))).classes(
                             "ap-h2 text-warning")
                     ui.space()
                     ui.html(f'<span class="ap-chip">{_MODE_RU.get(log.mode, log.mode)}</span>')
@@ -863,7 +863,7 @@ def page_run():
             if not log.events:
                 steps.clear()
                 steps._rendered_ids = set()
-                ui.label(i18n.t("События появятся через несколько секунд...")).classes("ap-muted")
+                ui.label(i18n.t(i18n.t("События появятся через несколько секунд..."))).classes("ap-muted")
             else:
                 # Рендерим только новые события
                 new_events = [e for e in log.events if e.get("id") not in rendered_ids]
@@ -876,10 +876,10 @@ def page_run():
                     elif kind == "node_end":
                         node = event.get("node", "")
                         facts = []
-                        for key, label in (("ok", "успешно"), ("total", "всего"),
-                                           ("steps", "шагов"), ("ok_steps", "шагов успешно"),
-                                           ("chars", "символов"), ("consensus", "консенсус"),
-                                           ("decided_by", "решение")):
+                        for key, label in (("ok", i18n.t("успешно")), ("total", i18n.t("всего")),
+                                           ("steps", i18n.t("шагов")), ("ok_steps", i18n.t("шагов успешно")),
+                                           ("chars", i18n.t("символов")), ("consensus", i18n.t("консенсус")),
+                                           ("decided_by", i18n.t("решение"))):
                             if key in event:
                                 value = event[key]
                                 if key == "decided_by":
@@ -918,7 +918,7 @@ def page_run():
                                  f"{str(event.get('args'))[:110]}", "text-info", 2)
                     elif kind == "tool_result":
                         ok = bool(event.get("ok"))
-                        cached = " (из кеша)" if event.get("from_cache") else ""
+                        cached = i18n.t(" (из кеша)") if event.get("from_cache") else ""
                         log_line(f"{'✓' if ok else '✗'}{cached} "
                                  f"{str(event.get('summary') or event.get('error'))[:190]}",
                                  _status_color(ok), 3)
@@ -930,18 +930,18 @@ def page_run():
                         with ui.expansion(
                                 f"💬 [{event.get('speaker')}] "
                                 f"{str(event.get('preview'))[:120]}…",
-                                caption="нажми, чтобы раскрыть полный текст",
+                                caption=i18n.t("нажми, чтобы раскрыть полный текст"),
                                 icon="chat").classes("w-full").style(
                                 "border:1px solid #2f3548; border-radius:8px"):
                             ui.markdown(full or str(event.get("preview") or "")).classes(
                                 "text-sm")
                     elif kind == "meeting_done":
-                        log_line("✓ Совещание завершено, консенсус достигнут",
+                        log_line(i18n.t("✓ Совещание завершено, консенсус достигнут"),
                                  "text-positive", 1)
                         cons_full = str(event.get("consensus_text") or "")
                         with ui.expansion(
                                 f"📋 Консенсус-план: {cons_full[:120]}…",
-                                caption="полный план согласован командой",
+                                caption=i18n.t("полный план согласован командой"),
                                 icon="description").classes("w-full").style(
                                 "border:1px solid #2f3548; border-radius:8px"):
                             ui.markdown(cons_full).classes("text-sm")
@@ -976,7 +976,7 @@ def page_run():
         with answer_box:
             answer_box.clear()
             if log.final_answer:
-                ui.label(i18n.t("Итоговый ответ")).classes("text-lg font-bold")
+                ui.label(i18n.t(i18n.t("Итоговый ответ"))).classes("text-lg font-bold")
                 ui.markdown(log.final_answer).classes("text-sm")
             elif log.final_meta:
                 ui.label(log.final_meta).classes("ap-muted")
@@ -994,16 +994,16 @@ def page_run():
 @ui.page("/history")
 def page_history():
     layout("/history")
-    page_title(i18n.t("История задач"), i18n.t("Все выполненные задачи с результатами и планами"))
+    page_title(i18n.t(i18n.t("История задач")), i18n.t(i18n.t("Все выполненные задачи с результатами и планами")))
     platform = STATE.platform
-    search = ui.input(placeholder="Поиск по тексту задачи").props(
+    search = ui.input(placeholder=i18n.t("Поиск по тексту задачи")).props(
         "outlined dense clearable").classes("w-full").style("max-width:520px")
     table_box = ui.column().classes("w-full gap-2")
 
-    _STATUS = {"done": ("выполнено", "text-positive", "check_circle"),
-               "failed": ("ошибка", "text-negative", "error"),
-               "running": ("выполняется", "text-info", "autorenew"),
-               "created": ("создана", "ap-muted", "schedule")}
+    _STATUS = {"done": (i18n.t("выполнено"), "text-positive", "check_circle"),
+               "failed": (i18n.t("ошибка"), "text-negative", "error"),
+               "running": (i18n.t("выполняется"), "text-info", "autorenew"),
+               "created": (i18n.t("создана"), "ap-muted", "schedule")}
 
     def refresh():
         table_box.clear()
@@ -1015,10 +1015,10 @@ def page_history():
             if not rows:
                 with ui.column().classes("ap-card items-center gap-2 w-full py-8"):
                     _icon("inbox").classes("text-4xl text-primary")
-                    ui.label(i18n.t("Ничего не найдено") if query else i18n.t("Журнал пуст")
+                    ui.label(i18n.t(i18n.t("Ничего не найдено")) if query else i18n.t(i18n.t("Журнал пуст"))
                              ).classes("ap-h2")
-                    ui.label(i18n.t("Измените запрос") if query
-                             else i18n.t("Выполните первую задачу — она появится здесь")
+                    ui.label(i18n.t(i18n.t("Измените запрос")) if query
+                             else i18n.t(i18n.t("Выполните первую задачу — она появится здесь"))
                              ).classes("ap-muted")
                 return
             for row in rows:
@@ -1030,18 +1030,18 @@ def page_history():
                         ui.label(row["prompt"][:140]).classes("text-sm font-bold")
                         timestamp = row["created_at"][:19].replace("T", " ")
                         rest = [_MODE_RU.get(row["mode"], row["mode"]),
-                                "облако" if row.get("used_cloud") else "локально"]
+                                i18n.t("облако") if row.get("used_cloud") else i18n.t("локально")]
                         ui.html(f'<span class="ap-muted">'
                                 f'<span class="ap-mono">{timestamp}</span> · '
                                 f'{" · ".join(rest)}</span>')
                     ui.label(caption).classes(f"text-xs {color}")
-                    ui.button("Подробно", icon="chevron_right",
+                    ui.button(i18n.t("Подробно"), icon="chevron_right",
                               on_click=lambda r=row: ui.navigate.to(
                                   f"/task/{r['task_id']}")).props("size=sm flat color=primary")
 
     search.on("update:model-value", lambda _: refresh())
     refresh()
-    ui.button("Обновить", icon="refresh", on_click=refresh).classes("mt-3").props("outline")
+    ui.button(i18n.t("Обновить"), icon="refresh", on_click=refresh).classes("mt-3").props("outline")
 
 
 @ui.page("/task/{task_id}")
@@ -1055,12 +1055,12 @@ def page_task_detail(task_id: str):
         record = platform.blackboard.load_record(task_id)
         with body:
             if record is None:
-                ui.label(i18n.t("Задача не найдена")).classes("text-negative")
+                ui.label(i18n.t(i18n.t("Задача не найдена"))).classes("text-negative")
                 return
 
-            page_title("Детали задачи", record.task.prompt[:160])
-            status_ru = {"done": "выполнено", "failed": "ошибка",
-                         "running": "выполняется", "created": "создана"}
+            page_title(i18n.t("Детали задачи"), record.task.prompt[:160])
+            status_ru = {"done": i18n.t("выполнено"), "failed": i18n.t("ошибка"),
+                         "running": i18n.t("выполняется"), "created": i18n.t("создана")}
             with ui.row().classes("gap-2 flex-wrap"):
                 ui.html(f'<span class="ap-chip ap-mono">#{task_id[:8]}</span>')
                 ui.html(f'<span class="ap-chip">'
@@ -1076,7 +1076,7 @@ def page_task_detail(task_id: str):
                         "border-color:#3fb98c"):
                     with ui.row().classes("items-center gap-2"):
                         _icon("task_alt").classes("text-positive")
-                        ui.label(i18n.t("Итоговый ответ")).classes("ap-h2")
+                        ui.label(i18n.t(i18n.t("Итоговый ответ"))).classes("ap-h2")
                     ui.markdown(record.final.answer)
                     ui.label(
                         f"{_DECIDED_RU.get(record.final.decided_by, record.final.decided_by)}"
@@ -1084,7 +1084,7 @@ def page_task_detail(task_id: str):
                         f" · {'облако' if record.final.used_cloud else 'локально'}"
                     ).classes("ap-muted")
                     if record.final.rationale:
-                        with ui.expansion("Обоснование", icon="notes").classes(
+                        with ui.expansion(i18n.t("Обоснование"), icon="notes").classes(
                                 "w-full ap-card-soft"):
                             ui.markdown(record.final.rationale)
 
@@ -1111,10 +1111,10 @@ def page_task_detail(task_id: str):
 
             if record.step_results:
                 with ui.column().classes("ap-card gap-1 w-full"):
-                    ui.label(i18n.t("Результаты шагов")).classes("ap-h2")
+                    ui.label(i18n.t(i18n.t("Результаты шагов"))).classes("ap-h2")
                     for result in record.step_results:
-                        mark = "успех" if result.ok else "сбой"
-                        warn = " · есть вопросы" if result.warnings else ""
+                        mark = i18n.t("успех") if result.ok else i18n.t("сбой")
+                        warn = i18n.t(" · есть вопросы") if result.warnings else ""
                         with ui.expansion(
                             f"{result.step_id}. {result.title} — {result.assignee} · "
                             f"{mark}{warn} · {result.latency_ms} мс"
@@ -1130,10 +1130,10 @@ def page_task_detail(task_id: str):
                 with ui.column().classes("ap-card gap-2 w-full"):
                     with ui.row().classes("items-center gap-2 w-full"):
                         _icon("compare_arrows").classes("text-accent")
-                        ui.label(i18n.t("Сравнение исполнителей")).classes("ap-h2")
+                        ui.label(i18n.t(i18n.t("Сравнение исполнителей"))).classes("ap-h2")
                         ui.space()
                         if record.verdict:
-                            agree = "консенсус" if record.verdict.consensus else "расхождение"
+                            agree = i18n.t("консенсус") if record.verdict.consensus else i18n.t("расхождение")
                             ui.html(f'<span class="ap-chip">{agree}</span>')
                     if record.verdict:
                         ui.label(record.verdict.reason).classes("ap-muted")
@@ -1154,7 +1154,7 @@ def page_task_detail(task_id: str):
                                 meta = [f"{proposal.latency_ms} мс",
                                         f"инструментов: {len(proposal.tool_results)}"]
                                 if proposal.proposer_id in agreeing:
-                                    meta.append("в согласии")
+                                    meta.append(i18n.t("в согласии"))
                                 ui.label(" · ".join(meta)).classes("ap-muted")
                                 ui.separator().style("background:#2f3548")
                                 ui.markdown((proposal.answer or proposal.error or "—")[:1500]
@@ -1163,7 +1163,7 @@ def page_task_detail(task_id: str):
             calls = platform.blackboard.get_tool_calls(task_id)
             if calls:
                 with ui.column().classes("ap-card gap-1 w-full"):
-                    ui.label(i18n.t("Вызовы инструментов")).classes("ap-h2")
+                    ui.label(i18n.t(i18n.t("Вызовы инструментов"))).classes("ap-h2")
                     for call in calls:
                         with ui.row().classes("items-start gap-2"):
                             _icon("check_circle" if call["ok"] else "cancel").classes(
@@ -1174,9 +1174,9 @@ def page_task_detail(task_id: str):
                                      ).classes("text-xs ap-log")
 
             with ui.row().classes("gap-2"):
-                ui.button("К истории", icon="arrow_back",
+                ui.button(i18n.t("К истории"), icon="arrow_back",
                           on_click=lambda: ui.navigate.to("/history")).props("outline")
-                ui.button("Обновить", icon="refresh", on_click=render).props("flat")
+                ui.button(i18n.t("Обновить"), icon="refresh", on_click=render).props("flat")
 
     render()
 
@@ -1189,7 +1189,7 @@ def _bb_task_to_log(bb_task: dict) -> Any:
 
     Статус (running/finished/error) берём из tasks.status, а не из пустого
     RunLog текущего процесса (см. комментарий в page_run.refresh) — иначе
-    панель мгновенно и ошибочно показывает "Задача выполнена".
+    панель мгновенно и ошибочно показывает i18n.t("Задача выполнена").
 
     Состояние КАЖДОГО ШАГА берём из поля ok/error результата, а НЕ из
     столбца plan_steps.status: тот не обновляется из-за отсутствующей
@@ -1283,30 +1283,30 @@ def _record_to_log(record) -> Any:
 def page_knowledge():
     """База знаний: список документов, поиск, удаление."""
     layout("/knowledge")
-    page_title(i18n.t("База знаний"), i18n.t("Локальные знания платформы: документы и поиск"))
+    page_title(i18n.t(i18n.t("База знаний")), i18n.t(i18n.t("Локальные знания платформы: документы и поиск")))
 
     def get_kb():
         from core.knowledge import KnowledgeBase
         return KnowledgeBase("data/knowledge.sqlite3")
 
-    with ui.expansion("➕ Добавить знание текстом", icon="add").classes(
+    with ui.expansion(i18n.t("➕ Добавить знание текстом"), icon="add").classes(
             "w-full").style("border:1px solid #2f3548; border-radius:8px"):
-        note_title = ui.input("Название").classes("w-full").props("outlined dense")
-        note_text = ui.textarea("Текст знания").classes("w-full").props(
+        note_title = ui.input(i18n.t("Название")).classes("w-full").props("outlined dense")
+        note_text = ui.textarea(i18n.t("Текст знания")).classes("w-full").props(
             "outlined dense")
-        note_tags = ui.input("Теги (через запятую)").classes("w-full").props(
+        note_tags = ui.input(i18n.t("Теги (через запятую)")).classes("w-full").props(
             "outlined dense")
 
         def do_add_text():
             text = (note_text.value or "").strip()
             if not text:
-                ui.notify("Пустой текст", type="warning")
+                ui.notify(i18n.t("Пустой текст"), type="warning")
                 return
             try:
                 kb = get_kb()
                 r = kb.add_document(f"note://{note_title.value or 'заметка'}",
                                     text,
-                                    title=note_title.value or "заметка",
+                                    title=note_title.value or i18n.t("заметка"),
                                     tags=note_tags.value or "")
                 kb.close()
             except Exception as exc:
@@ -1317,13 +1317,13 @@ def page_knowledge():
                 note_title.value = note_text.value = note_tags.value = ""
                 render_docs()
             else:
-                ui.notify(r.get("error", "ошибка"), type="negative")
+                ui.notify(r.get("error", i18n.t("ошибка")), type="negative")
 
-        ui.button("Добавить", icon="save", on_click=do_add_text).props(
+        ui.button(i18n.t("Добавить"), icon="save", on_click=do_add_text).props(
             "color=primary dense")
 
     with ui.row().classes("w-full gap-2 items-center"):
-        search_box = ui.input("Поиск по базе").classes("flex-grow").props(
+        search_box = ui.input(i18n.t("Поиск по базе")).classes("flex-grow").props(
             "outlined dense clearable")
         search_btn = ui.button(icon="search").props("flat round dense")
         ui.space()
@@ -1355,7 +1355,7 @@ def page_knowledge():
                         icon="description").classes("w-full").style(
                         "border:1px solid #2f3548; border-radius:8px"):
                     with ui.row().classes("w-full justify-end gap-2"):
-                        ui.button("Удалить", icon="delete", on_click=lambda
+                        ui.button(i18n.t("Удалить"), icon="delete", on_click=lambda
                                   did=d["doc_id"]: do_delete(did)).props(
                             "color=negative flat dense")
 
@@ -1363,7 +1363,7 @@ def page_knowledge():
         results_col.clear()
         with results_col:
             if not hits:
-                ui.label(i18n.t("Ничего не найдено.")).classes("ap-muted")
+                ui.label(i18n.t(i18n.t("Ничего не найдено."))).classes("ap-muted")
             for i, h in enumerate(hits, 1):
                 meta = " · ".join(x for x in (
                     h.get("doc_type") or "", h.get("tags") or "",
@@ -1400,7 +1400,7 @@ def page_knowledge():
         except Exception as exc:
             ui.notify(f"Ошибка удаления: {exc}", type="negative")
             return
-        ui.notify("Удалено")
+        ui.notify(i18n.t("Удалено"))
         render_docs()
 
     search_btn.on("click", do_search)
@@ -1412,7 +1412,7 @@ def page_knowledge():
 @ui.page("/tools")
 def page_tools():
     layout("/tools")
-    page_title("Инструменты",
+    page_title(i18n.t("Инструменты"),
                "Каждый инструмент — отдельная папка в tools/. Чтобы добавить новый, "
                "скопируйте существующий и правьте manifest.yaml: код платформы "
                "менять не нужно.")
@@ -1443,7 +1443,7 @@ def page_tools():
         try:
             check = yaml.safe_load(patched) or {}
             if bool(check.get("enabled")) is not enabled:
-                raise ValueError("значение enabled не применилось")
+                raise ValueError(i18n.t("значение enabled не применилось"))
         except Exception as exc:  # noqa: BLE001
             ui.notify(f"Не удалось изменить манифест: {exc}", type="negative")
             return
@@ -1451,7 +1451,7 @@ def page_tools():
         platform.registry.discover()
         platform.refresh_tool_context()
         refresh()
-        ui.notify(f"Инструмент {entry.name}: {'включён' if enabled else 'выключен'}")
+        ui.notify(f"Инструмент {entry.name}: {i18n.t('включён') if enabled else 'выключен'}")
 
     def refresh():
         box.clear()
@@ -1465,12 +1465,12 @@ def page_tools():
             if not platform.registry.entries:
                 with ui.column().classes("ap-card items-center gap-2 w-full py-8"):
                     _icon("extension_off").classes("text-4xl text-primary")
-                    ui.label(i18n.t("Плагины не найдены в папке tools/")).classes("ap-h2")
+                    ui.label(i18n.t(i18n.t("Плагины не найдены в папке tools/"))).classes("ap-h2")
                 return
-            status_ru = {"ready": ("готов", "text-positive", "check_circle"),
-                         "unavailable": ("окружение не готово", "text-warning", "warning"),
-                         "disabled": ("выключен", "ap-muted", "toggle_off"),
-                         "error": ("ошибка", "text-negative", "error")}
+            status_ru = {"ready": (i18n.t("готов"), "text-positive", "check_circle"),
+                         "unavailable": (i18n.t("окружение не готово"), "text-warning", "warning"),
+                         "disabled": (i18n.t("выключен"), "ap-muted", "toggle_off"),
+                         "error": (i18n.t("ошибка"), "text-negative", "error")}
             for entry in platform.registry.entries.values():
                 caption, color, icon = status_ru.get(
                     entry.status.value, (entry.status.value, "ap-muted", "help"))
@@ -1494,7 +1494,7 @@ def page_tools():
                         ui.switch(value=entry.manifest.enabled,
                                   on_change=lambda e, en=entry: toggle(en, e.value))
                     if entry.instance is not None:
-                        with ui.expansion("Что умеет", icon="list").classes(
+                        with ui.expansion(i18n.t("Что умеет"), icon="list").classes(
                                 "w-full ap-card-soft"):
                             for action in entry.instance.actions():
                                 with ui.row().classes("items-start gap-2"):
@@ -1502,11 +1502,11 @@ def page_tools():
                                         "text-xs font-bold").style("min-width:150px")
                                     ui.label(action.description).classes("ap-muted")
                     if entry.manifest.requires:
-                        ui.label(i18n.t("Требования: ") + ", ".join(entry.manifest.requires)
+                        ui.label(i18n.t(i18n.t("Требования: ")) + ", ".join(entry.manifest.requires)
                                  ).classes("ap-muted")
 
     refresh()
-    ui.button("Перечитать плагины", icon="refresh", on_click=refresh).classes("mt-3").props("outline")
+    ui.button(i18n.t("Перечитать плагины"), icon="refresh", on_click=refresh).classes("mt-3").props("outline")
 
 
 # --------------------------------------------------------------------------
@@ -1514,26 +1514,26 @@ def page_tools():
 # --------------------------------------------------------------------------
 
 _FLAG_RU = {
-    "router": "Маршрутизатор (классификация задач)",
-    "retrieval": "Поиск по локальной базе знаний",
-    "tools": "Инструменты (плагины)",
-    "proposers": "Исполнители (ансамбль моделей)",
-    "verifier": "Проверяющий (голосование 2 из 3)",
-    "judge": "Арбитр (итоговое решение)",
-    "cloud_judge": "Разрешить арбитру уходить в облако",
-    "judge_subagents": "Арбитр может переспрашивать локальные модели",
-    "orchestrator": "Режим «Оркестратор» (планировщик делит задачу на шаги)",
-    "lead_agent": "Lead Agent: один исполнитель делает задачу целиком (без планировщика)",
-    "team_mode": "Команда: совещание моделей + взаимная проверка (для orchestrated)",
-    "orchestrator_review": "Adversarial-ревью итога после выполнения",
-    "observability": "Трейсинг в Langfuse",
+    "router": i18n.t("Маршрутизатор (классификация задач)"),
+    "retrieval": i18n.t("Поиск по локальной базе знаний"),
+    "tools": i18n.t("Инструменты (плагины)"),
+    "proposers": i18n.t("Исполнители (ансамбль моделей)"),
+    "verifier": i18n.t("Проверяющий (голосование 2 из 3)"),
+    "judge": i18n.t("Арбитр (итоговое решение)"),
+    "cloud_judge": i18n.t("Разрешить арбитру уходить в облако"),
+    "judge_subagents": i18n.t("Арбитр может переспрашивать локальные модели"),
+    "orchestrator": i18n.t("Режим «Оркестратор» (планировщик делит задачу на шаги)"),
+    "lead_agent": i18n.t("Lead Agent: один исполнитель делает задачу целиком (без планировщика)"),
+    "team_mode": i18n.t("Команда: совещание моделей + взаимная проверка (для orchestrated)"),
+    "orchestrator_review": i18n.t("Adversarial-ревью итога после выполнения"),
+    "observability": i18n.t("Трейсинг в Langfuse"),
 }
 
 
 @ui.page("/settings")
 def page_settings():
     layout("/settings")
-    page_title(i18n.t("Настройки"), i18n.t("Значения по умолчанию для новых задач и узлы графа"))
+    page_title(i18n.t(i18n.t("Настройки")), i18n.t(i18n.t("Значения по умолчанию для новых задач и узлы графа")))
     from config.loader import load_settings, save_settings
 
     settings = load_settings()
@@ -1542,28 +1542,28 @@ def page_settings():
     privacy = dict(settings.get("privacy") or {})
 
     with ui.column().classes("ap-card gap-2 w-full").style("max-width:900px"):
-        ui.label(i18n.t("Режим работы")).classes("ap-h2")
+        ui.label(i18n.t(i18n.t("Режим работы"))).classes("ap-h2")
         mode_select = ui.select(
-            {"auto": "Автоматический (локально + облако при доступности)",
-             "local_only": "Строго локальный (данные не покидают компьютер)",
-             "orchestrated": "Оркестратор (планировщик делит задачу на шаги)"},
-            value=str(settings.get("mode", "auto")), label="Режим по умолчанию",
+            {"auto": i18n.t("Автоматический (локально + облако при доступности)"),
+             "local_only": i18n.t("Строго локальный (данные не покидают компьютер)"),
+             "orchestrated": i18n.t("Оркестратор (планировщик делит задачу на шаги)")},
+            value=str(settings.get("mode", "auto")), label=i18n.t("Режим по умолчанию"),
         ).classes("w-full")
         privacy_switch = ui.switch(
-            "Автоматически переходить в локальный режим при признаках конфиденциальности",
+            i18n.t("Автоматически переходить в локальный режим при признаках конфиденциальности"),
             value=bool(privacy.get("force_local_for_sensitive", True)))
 
     with ui.column().classes("ap-card gap-2 w-full").style("max-width:900px"):
-        ui.label(i18n.t("Режим «Оркестратор»")).classes("ap-h2")
+        ui.label(i18n.t(i18n.t("Режим «Оркестратор»"))).classes("ap-h2")
         ui.label(i18n.t("Планировщик делит задачу на шаги и поручает их малым локальным "
                  "моделям. Шаги выполняются ТОЛЬКО локально: содержимое файлов "
                  "не уходит в облако даже с облачным планировщиком.")).classes("ap-muted")
         placement_select = ui.select(
-            {"auto": "Автоматически (облако при доступности, иначе локально)",
-             "cloud": "Облачный планировщик (сильнее планирует)",
-             "local": "Локальный планировщик (ничего не уходит в сеть)"},
+            {"auto": i18n.t("Автоматически (облако при доступности, иначе локально)"),
+             "cloud": i18n.t("Облачный планировщик (сильнее планирует)"),
+             "local": i18n.t("Локальный планировщик (ничего не уходит в сеть)")},
             value=str((settings.get("orchestrator") or {}).get("placement", "auto")),
-            label="Где работает планировщик",
+            label=i18n.t("Где работает планировщик"),
         ).classes("w-full")
         # Модель планировщика по умолчанию. На экране задачи её можно
         # переопределить для одного запуска.
@@ -1572,27 +1572,27 @@ def page_settings():
             _default = STATE.platform.gateway.orchestrator_spec().model
         except Exception:  # noqa: BLE001
             _cands, _default = [], ""
-        planner_options = {"": f"По умолчанию — {_default or 'из models.yaml'}"}
+        planner_options = {"": f"По умолчанию — {_default or i18n.t('из models.yaml')}"}
         for _spec in _cands:
             planner_options[_spec.model] = str(_spec.extra.get("label") or _spec.model)
         _saved = str((settings.get("orchestrator") or {}).get("model", ""))
         planner_model_select = ui.select(
             planner_options,
             value=_saved if _saved in planner_options else "",
-            label="Модель локального планировщика",
+            label=i18n.t("Модель локального планировщика"),
         ).classes("w-full")
         ui.label(i18n.t("Главное требование к планировщику — стабильный JSON и перенос "
                  "путей из задачи в шаги. Замеры по каждой модели — в "
                  "комментариях config/models.yaml.")).classes("ap-muted")
         max_steps = ui.number(
-            "Максимум шагов в плане",
+            i18n.t("Максимум шагов в плане"),
             value=int((settings.get("limits") or {}).get("max_plan_steps", 6)),
             min=1, max=12, precision=0).classes("w-full")
         ui.label(i18n.t("Каждый шаг — отдельный вызов модели. На 8 ГБ видеопамяти больше "
                  "6 шагов дают заметное ожидание.")).classes("ap-muted")
 
     with ui.column().classes("ap-card gap-2 w-full").style("max-width:900px"):
-        ui.label(i18n.t("Узлы графа")).classes("ap-h2")
+        ui.label(i18n.t(i18n.t("Узлы графа"))).classes("ap-h2")
         ui.label(i18n.t("Выключенный узел исключается из графа целиком — полезно для отладки "
                  "и ускорения.")).classes("ap-muted")
         flag_switches: dict[str, Any] = {}
@@ -1600,18 +1600,18 @@ def page_settings():
             flag_switches[key] = ui.switch(_FLAG_RU.get(key, key), value=bool(value))
 
     with ui.column().classes("ap-card gap-2 w-full").style("max-width:900px"):
-        ui.label(i18n.t("Защита от сбоев облака")).classes("ap-h2")
-        fail_max = ui.number("Сбоев до отключения облака",
+        ui.label(i18n.t(i18n.t("Защита от сбоев облака"))).classes("ap-h2")
+        fail_max = ui.number(i18n.t("Сбоев до отключения облака"),
                              value=int(resilience.get("fail_max", 3)), min=1, max=20, precision=0)
-        reset_timeout = ui.number("Пауза перед повторной попыткой, с",
+        reset_timeout = ui.number(i18n.t("Пауза перед повторной попыткой, с"),
                                   value=int(resilience.get("reset_timeout_sec", 30)),
                                   min=5, max=600, precision=0)
-        health_timeout = ui.number("Таймаут проверки связи, с",
+        health_timeout = ui.number(i18n.t("Таймаут проверки связи, с"),
                                    value=int(resilience.get("health_timeout_sec", 5)),
                                    min=1, max=60, precision=0)
 
     with ui.column().classes("ap-card gap-2 w-full").style("max-width:900px"):
-        ui.label(i18n.t("Модели по ролям")).classes("ap-h2")
+        ui.label(i18n.t(i18n.t("Модели по ролям"))).classes("ap-h2")
         ui.label(i18n.t("Список моделей задаётся в config/models.yaml. Добавление модели "
                  "не требует изменения кода — см. CONTRIBUTING_MODELS.md.")).classes("ap-muted")
         platform = STATE.platform
@@ -1629,14 +1629,14 @@ def page_settings():
             else:
                 ui.label(f"Планировщик (резервный многошаговый): "
                          f"{platform.gateway.orchestrator_spec().model}").classes("text-sm")
-            ui.label(i18n.t("Исполнители: ") + ", ".join(
+            ui.label(i18n.t(i18n.t("Исполнители: ")) + ", ".join(
                 f"{s.id} → {s.model}" for s in platform.gateway.proposer_specs())).classes("text-sm")
             ui.label(f"Проверяющий (adversarial-ревью): {verifier_model}").classes("text-sm")
             ui.label(f"Арбитр: облако {cloud_judge.model if cloud_judge else '—'} → "
                      f"локально {local_judge.model}").classes("text-sm")
         except Exception as exc:  # noqa: BLE001
             ui.label(f"Ошибка чтения models.yaml: {exc}").classes("text-red-8")
-        ui.link("Ввести ключи доступа", "/secrets").classes("text-sm")
+        ui.link(i18n.t("Ввести ключи доступа"), "/secrets").classes("text-sm")
         ui.label(i18n.t("Ключ облака вводится на экране «Ключи доступа» или переменной "
                  "OPENROUTER_API_KEY. Без ключа платформа работает полностью локально.")).classes("ap-muted")
 
@@ -1654,9 +1654,9 @@ def page_settings():
         })
         save_settings(settings)
         STATE.reload_platform()
-        ui.notify("Настройки сохранены, платформа перезагружена", type="positive")
+        ui.notify(i18n.t("Настройки сохранены, платформа перезагружена"), type="positive")
 
-    ui.button("Сохранить настройки", icon="save", on_click=save).classes("mt-3").props(
+    ui.button(i18n.t("Сохранить настройки"), icon="save", on_click=save).classes("mt-3").props(
         "color=primary size=lg")
 
     # ---- обслуживание: перезагрузка и аварийное выключение -----------------
@@ -1671,7 +1671,7 @@ def page_settings():
         return STATE.snapshot().running
 
     with ui.column().classes("ap-card gap-2 w-full").style("max-width:900px"):
-        ui.label(i18n.t("Обслуживание")).classes("ap-h2")
+        ui.label(i18n.t(i18n.t("Обслуживание"))).classes("ap-h2")
         ui.label(i18n.t("Перезагрузка компонентов применяет изменения конфигов, моделей и "
             "инструментов без закрытия панели. Полный рестарт нужен после правок "
             "кода (агентов, интерфейса): он перезапускает процесс целиком.")).classes("ap-muted")
@@ -1683,9 +1683,9 @@ def page_settings():
                 return
             STATE.reload_platform()
             STATE.platform  # форсируем пересборку ленивого синглтона
-            ui.notify("Компоненты платформы перезагружены", type="positive")
+            ui.notify(i18n.t("Компоненты платформы перезагружены"), type="positive")
 
-        ui.button("Перезагрузить компоненты", icon="refresh", on_click=do_reload).props(
+        ui.button(i18n.t("Перезагрузить компоненты"), icon="refresh", on_click=do_reload).props(
             "color=primary outline size=md").classes("mt-1")
 
         confirm = {"armed": False}
@@ -1695,11 +1695,11 @@ def page_settings():
             if not confirm["armed"]:
                 confirm["armed"] = True
                 restart_btn.text = "Точно перезапустить? Нажмите ещё раз"
-                ui.notify("Нажмите кнопку ещё раз для подтверждения", type="warning")
+                ui.notify(i18n.t("Нажмите кнопку ещё раз для подтверждения"), type="warning")
                 return
             import os, subprocess, sys, time
             if _running_task_active():
-                ui.notify("Задача ещё выполняется — она будет прервана", type="warning")
+                ui.notify(i18n.t("Задача ещё выполняется — она будет прервана"), type="warning")
             python = sys.executable
             args = [python, *sys.argv]
             subprocess.Popen(args, cwd=str(ROOT),
@@ -1707,7 +1707,7 @@ def page_settings():
             time.sleep(0.5)  # дать новому процессу стартовать
             os._exit(0)      # аварийно гасим текущий процесс без cleanup-ловушек
 
-        restart_btn = ui.button("Перезапустить панель (полный рестарт)",
+        restart_btn = ui.button(i18n.t("Перезапустить панель (полный рестарт)"),
                                 icon="restart_alt", on_click=do_restart).props(
             "color=warning outline size=md")
 
@@ -1725,7 +1725,7 @@ def page_settings():
                 pass
             os._exit(1)
 
-        shutdown_btn = ui.button("Аварийное выключение", icon="power_settings_new",
+        shutdown_btn = ui.button(i18n.t("Аварийное выключение"), icon="power_settings_new",
                                  on_click=do_shutdown).props("color=negative outline size=md")
         ui.label(i18n.t("Аварийное выключение прерывает выполняющуюся задачу и закрывает "
                  "панель. Завершённые задачи сохранены в журнале.")).classes("ap-muted")
@@ -1739,12 +1739,12 @@ def page_settings():
 @ui.page("/changelog")
 def page_changelog():
     layout("/changelog")
-    page_title(i18n.t("Журнал изменений"), i18n.t("Что менялось в платформе и почему"))
+    page_title(i18n.t(i18n.t("Журнал изменений")), i18n.t(i18n.t("Что менялось в платформе и почему")))
     changelog = ROOT / "CHANGELOG.md"
     if changelog.is_file():
         ui.markdown(changelog.read_text(encoding="utf-8")).classes("w-full max-w-4xl")
     else:
-        ui.label(i18n.t("Файл CHANGELOG.md не найден")).classes("opacity-70")
+        ui.label(i18n.t(i18n.t("Файл CHANGELOG.md не найден"))).classes("opacity-70")
 
 
 # --------------------------------------------------------------------------
