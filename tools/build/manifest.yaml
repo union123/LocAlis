@@ -4,6 +4,7 @@
 name: build
 version: 1.0.0
 description: Запуск сборки и проверки типов (npm install, npx tsc --noEmit, ng build) в папке проекта
+description_en: "Runs the build and type checks (npm install, npx tsc --noEmit, ng build) in the project folder."
 enabled: true
 entrypoint: build_tool.py
 class_name: BuildTool

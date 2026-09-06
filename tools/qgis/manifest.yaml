@@ -3,6 +3,7 @@
 name: qgis
 version: 1.1.0
 description: Работа с геоданными через QGIS (слои, атрибуты, экспорт GeoJSON)
+description_en: "QGIS/GeoJSON spatial operations without opening QGIS: attributes, buffers, intersections, area/length. Aggregated output avoids context overflow."
 enabled: true
 entrypoint: qgis_tool.py
 class_name: QgisTool

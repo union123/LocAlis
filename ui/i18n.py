@@ -13,6 +13,15 @@ from pathlib import Path
 _LANG_FILE = Path("data/ui_lang.json")
 
 _EN: dict[str, str] = {
+    "Больше контекст = больше VRAM под KV-кеш. 128K — только для очень длинных задач; на 8 ГБ VRAM безопасно 32–64К": "More context = more VRAM for the KV cache. 128K is for very long tasks only; 32–64K is safe on 8 GB VRAM",
+    "Использование инструментов": "Tool usage",
+    "Локальные модели (Ollama)": "Local models (Ollama)",
+    "Исполнитель C": "Executor C",
+    "Исполнитель B": "Executor B",
+    "Исполнитель A": "Executor A",
+    "Арбитр локальный": "Local arbiter",
+    "Проверяющий": "Verifier",
+    "Планировщик": "Planner",
     " (из кеша)": " (cached)",
     " (сохранён в приложении)": " (stored in the app)",
     " · есть вопросы": " · has concerns",

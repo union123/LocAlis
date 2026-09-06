@@ -2,6 +2,7 @@ name: container
 version: 1.0.0
 entrypoint: container_tool.py
 description: >
+description_en: "Shell/file access inside the Terminal-Bench task container via docker exec + sh -c. Active only when env LOCALIS_TB_CONTAINER is set."
   Shell внутри docker-контейнера задачи (Terminal-Bench): выполнить команду,
   прочитать/записать файл. Активен только когда задана переменная окружения
   LOCALIS_TB_CONTAINER (адаптер TB-прогона). Позволяет платформе исполнять

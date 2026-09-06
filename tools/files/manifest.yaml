@@ -6,6 +6,7 @@
 name: files
 version: 1.1.0
 description: Чтение текстовых файлов, просмотр папок, поиск по содержимому, сведения о файле
+description_en: "Reads text files and folder listings within allowed roots. Paging for large files."
 enabled: true
 entrypoint: files_tool.py
 class_name: FilesTool

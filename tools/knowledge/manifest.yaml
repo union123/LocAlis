@@ -2,6 +2,7 @@ name: knowledge
 version: 1.0.0
 entrypoint: knowledge_tool.py
 description: >
+description_en: "Hybrid knowledge base (FTS5 + bge-m3 vectors): search, add_text, add_file, list, delete, stats."
   Локальная база знаний: добавление документов (текст, PDF, CSV, XLSX, JSON,
   веб-страницы) и гибридный поиск по ним (точный + смысловой). Всё хранится
   локально (SQLite FTS5 + вектора bge-m3 через Ollama). Модели могут искать

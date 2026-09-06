@@ -13,6 +13,7 @@
 name: vision
 version: 1.0.0
 description: Распознавание и описание изображений через локальную мультимодальную модель Ollama (описание сцены, ответ на вопрос по картинке, OCR)
+description_en: "Image analysis by a local vision model (screenshot review, chart reading)."
 enabled: true
 entrypoint: vision_tool.py
 class_name: VisionTool

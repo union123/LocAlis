@@ -4,6 +4,7 @@
 name: local_agents
 version: 1.0.0
 description: Локальные модели как агенты — поручить задачу, спросить мнение, обсудить, разбить на подзадачи
+description_en: "Sub-agents: call a local model with a restricted toolset as a regular tool. Agents-as-tools pattern."
 enabled: true
 entrypoint: agents_tool.py
 class_name: LocalAgentsTool

@@ -15,6 +15,7 @@
 name: websearch
 version: 1.0.0
 description: Поиск в интернете по текстовому запросу и извлечение основного читаемого текста произвольной веб-страницы по ссылке
+description_en: "DuckDuckGo web search returning compact results (title/url/snippet)."
 enabled: true
 entrypoint: websearch_tool.py
 class_name: WebSearchTool

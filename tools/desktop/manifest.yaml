@@ -2,6 +2,7 @@ name: desktop
 version: 1.0.0
 entrypoint: desktop_tool.py
 description: >
+description_en: "Desktop automation via pyautogui: screenshots, clicks by coordinates, typing (Cyrillic via clipboard), hotkeys, window focus. Controls the REAL mouse/keyboard."
   Управление ноутбуком целиком: скриншот всего экрана или окна, клики,
   ввод текста, горячие клавиши, список окон и фокус на приложение.
   Скриншот анализируется инструментом vision — платформа видит экран

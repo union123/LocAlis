@@ -2,6 +2,7 @@
 name: datafiles
 version: 1.0.0
 description: Создание GeoJSON, CSV, GeoPackage и обычных текстовых файлов с проверкой результата
+description_en: "Writes tabular/structured artifacts: CSV (column order preserved), Excel, JSON, Markdown. Write-only by design — reading goes through files/qgis."
 enabled: true
 entrypoint: datafiles_tool.py
 class_name: DataFilesTool

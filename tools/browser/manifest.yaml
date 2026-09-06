@@ -2,6 +2,7 @@ name: browser
 version: 1.0.0
 entrypoint: browser_tool.py
 description: >
+description_en: "Headless browser control (Playwright): open URLs, take screenshots, click elements, read the browser console. Closes the 'compiles but doesn't work' blind spot: the platform can see the site with its own eyes. Screenshots go to data/browser_shots/ and are analyzed by the vision tool."
   Управление headless-браузером (Playwright): открыть URL, сделать скриншот,
   кликнуть по элементу, прочитать консоль браузера. Закрывает слепую зону
   "компилируется, но не работает": платформа может сама увидеть сайт глазами.
