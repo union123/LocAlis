@@ -291,9 +291,9 @@ class LLMGateway:
         try:
             raw = getattr(response, "raw_message", None) or {}
             eval_count = int(raw.get("_eval_count", 0) or 0)
-            eval_dur_us = int(raw.get("_eval_duration", 0) or 0)
-            eval_dur_ms = eval_dur_us // 1000 if eval_dur_us else 0
-            tps = round(eval_count / (eval_dur_us / 1e9), 1) if eval_dur_us else 0.0
+            eval_dur_ns = int(raw.get("_eval_duration", 0) or 0)
+            eval_dur_ms = eval_dur_ns // 1_000_000 if eval_dur_ns else 0  # нс -> мс
+            tps = round(eval_count / (eval_dur_ns / 1e9), 1) if eval_dur_ns else 0.0
             self._log_llm_call(
                 model=spec.model, provider=spec.provider,
                 ok=bool(getattr(response, "ok", False)),
@@ -495,7 +495,7 @@ class LLMGateway:
             out["_eval_count"] = usage["completion_tokens"]
             ms = usage.get("completion_ms") or usage.get("completion_time")
             if ms:
-                out["_eval_duration"] = int(ms) * 1000  # мс -> мкс (как у Ollama)
+                out["_eval_duration"] = int(ms) * 1_000_000  # мс -> нс (как у Ollama)
         return out
 
     def _chat_openrouter(self, spec, messages, tools, task_mode, timeout_sec) -> dict[str, Any]:

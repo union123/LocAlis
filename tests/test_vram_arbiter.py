@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """Мок-тесты: VRAM-арбитр (без реальных GPU-вызовов где возможно)."""
 import sys
-sys.path.insert(0, r"C:/Users/mgosh/localis-public")
-sys.path.insert(1, r"C:/Users/mgosh/localis-public/.venv/Lib/site-packages")
 
 from core.vram_arbiter import VRAMArbiter, classify
 

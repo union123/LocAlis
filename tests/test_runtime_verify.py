@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """Мок-тесты runtime-верификатора (без реальных npm/браузера)."""
 import sys
-sys.path.insert(0, r"C:/Users/mgosh/localis-public")
-sys.path.insert(1, r"C:/Users/mgosh/localis-public/.venv/Lib/site-packages")
 from pathlib import Path
 from core.runtime_verify import RuntimeVerifier
 

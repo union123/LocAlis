@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """Мок-тесты knowledge: retag, MIN_CONTEXT_SCORE, массовое добавление, delete."""
 import sys
-sys.path.insert(0, r"C:/Users/mgosh/localis-public")
-sys.path.insert(1, r"C:/Users/mgosh/localis-public/.venv/Lib/site-packages")
 import tempfile
 from pathlib import Path
 from core.knowledge import KnowledgeBase
