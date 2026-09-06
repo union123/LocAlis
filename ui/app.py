@@ -24,6 +24,7 @@ from nicegui import ui
 
 from ui.icons import icon as _icon, icon_svg as _icon_svg
 from ui.state import STATE
+from ui import welcome
 
 UI_VERSION = "1.2"
 ROOT = Path(__file__).resolve().parent.parent
@@ -186,6 +187,8 @@ def layout(active: str):
                 ui.label(APP_NAME).classes("text-lg font-bold tracking-wide")
                 ui.label(APP_TAGLINE).classes("ap-muted")
         with ui.row().classes("items-center gap-3"):
+            ui.button(icon="help_outline", on_click=lambda: welcome.open_about()).props(
+                "flat round dense size=sm").tooltip("About / setup")
             _header_status()
             ui.label(f"v{UI_VERSION}").classes("ap-muted")
 
