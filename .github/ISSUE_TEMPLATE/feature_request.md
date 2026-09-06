@@ -1,19 +1,19 @@
 ---
 name: Feature request
-about: Идея улучшения платформы
+about: An idea to improve the platform
 title: '[FEATURE] '
 labels: enhancement
 assignees: ''
 ---
 
-**Задача пользователя**
-Какую реальную задачу это решает?
+**User problem**
+What real task does this solve?
 
-**Предлагаемое решение**
-Минимальный вариант, который устроил бы.
+**Proposed solution**
+The minimal version that would satisfy you.
 
-**Альтернативы**
-Что пробовали / как решают другие.
+**Alternatives**
+What you tried / how others solve it.
 
-**Контекст**
-Железо, режим (lead/team), что уже пробовали.
+**Context**
+Hardware, mode (lead/team), anything else relevant.

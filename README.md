@@ -1,95 +1,100 @@
 # LocAlis
 
-> **Локальная мультиагентная платформа: три модели спорят над планом, исполняют его инструментами и проверяют друг друга — всё на вашем ноутбуке, без облака.**
+> **A local-first multi-agent platform: three models debate the plan, execute it with tools, and verify each other — all on your laptop, no cloud.**
 
 ![local](https://img.shields.io/badge/100%25-local-no_cloud_data_sent-success) ![multi-model](https://img.shields.io/badge/multi--model-3%2B%20proposers-blue) ![tools](https://img.shields.io/badge/tools-11%2B%20built--in-orange) ![license](https://img.shields.io/badge/license-MIT-blue)
 
+[README in Russian](README.ru.md)
+
 ```
-Задача → Router → Secretary (контекст)
+Task → Router → Secretary (context)
             ↓
    ┌── proposer_a ──┐
-   ├── proposer_b ──┤  → Арбитр → консенсус-план
+   ├── proposer_b ──┤  → Arbiter → consensus plan
    └── proposer_c ──┘
             ↓
-     Lead Executor (tool-calling: файлы, QGIS, браузер, контейнер…)
+     Lead Executor (tool-calling: files, QGIS, browser, container…)
             ↓
-   Cross-review (по фактам на диске) → Adversarial-ревью
+   Cross-review (against disk facts) → Adversarial review
             ↓
-   [auto-fix] → Итог + полный журнал в SQLite
+   [auto-fix] → Result + full journal in SQLite
 ```
 
-**LocAlis** превращает несколько локальных LLM (Ollama + llama.cpp) в слаженную
-команду: модели независимо предлагают план, арбитр сводит их в консенсус,
-исполнитель работает через 11+ инструментов (файлы, CSV/Excel, QGIS, браузер,
-shell в контейнере), а результат до выдачи проходит кросс-ревью и
-adversarial-проверку. Всё — на consumer-железе: ансамбль 30B-моделей уживается
-в 8 ГБ VRAM + 32 ГБ RAM thanks to VRAM-арбитру (тяжёлые модели выгружают
-экспертов в RAM).
+**LocAlis** turns several local LLMs (Ollama + llama.cpp) into a working team:
+models propose plans independently, an arbiter merges them into a consensus,
+an executor works through 11+ built-in tools (files, CSV/Excel, QGIS, browser,
+container shell), and the result passes cross-review plus an adversarial
+check before it reaches you. Everything runs on consumer hardware: an ensemble
+of 30B models fits in 8 GB VRAM + 32 GB RAM thanks to the VRAM arbiter
+(heavy models offload their experts to RAM).
 
-Конкурентоспособно с облачными агентами на публичных бенчмарках
-(Terminal-Bench, GAIA — см. таблицу ниже), при этом бесплатно и приватно.
+Competitive with cloud agents on public benchmarks (Terminal-Bench, GAIA —
+see the table below), while being free and private.
 
-## Возможности
+## Features
 
-- **Маршрутизация**: простые задачи решаются одной моделью сразу, сложные — ансамблем
-- **Team-режим**: N раундов совещания → консенсус арбитра → исполнение → кросс-ревью → auto-fix
-- **Adversarial-ревью**: отдельная модель пытается опровергнуть результат перед выдачей
-- **11+ инструментов**: файлы, CSV/Excel (с сохранением порядка колонок), QGIS, графики, headless-браузер (Playwright), desktop-автоматизация, гибридная база знаний (FTS5 + эмбеддинги), контейнерный shell
-- **VRAM-арбитр**: 30B+ модели получают эксклюзивный слот GPU, остальные выгружаются — ансамбль уживается в 8 ГБ VRAM
-- **Live-телеметрия**: токены/сек и латентность каждого вызова модели в SQLite
+- **Routing**: simple tasks are solved by one model immediately, complex ones go to the ensemble
+- **Team mode**: N rounds of plan debate → arbiter consensus → execution → cross-review → auto-fix
+- **Adversarial review**: a separate model tries to refute the result before it is released
+- **11+ tools**: files, CSV/Excel (column-order preserving), QGIS, charts, headless browser (Playwright), desktop automation, hybrid knowledge base (FTS5 + embeddings), container shell
+- **VRAM arbiter**: 30B+ models get an exclusive GPU slot while others are unloaded — the ensemble fits in 8 GB VRAM
+- **Live telemetry**: tokens/sec and latency of every model call, stored in SQLite
 
-## Бенчмарки
+## Benchmarks
 
-| Бенчмарк | Lead | Team-3R |
+| Benchmark | Lead | Team-3R |
 |---|---|---|
-| Terminal-Bench core (срез 20 задач) | 2/20 (10%) | **4/20 (20%)** |
-| GAIA validation L1 (42 задачи, text-only) | 13/42 (31%) | 2/мод. прогон, см. сноску |
+| Terminal-Bench core (20-task subset) | 2/20 (10%) | **4/20 (20%)** |
+| GAIA validation L1 (42 tasks, text-only) | 13/42 (31%) | 2-model run, see footnote |
 
-Первые две строки — одна ночная абляция (06.09), один адаптер v6.3,
-равные условия. Team-победы проверены вручную: `heterogeneous-dates`
-решён с точным эталоном 11.428571 (совещание поймало off-by-one),
-`fix-permissions` — 1/1 exec-теста в контейнере. Ниша Team — локальные
-файловые/shell-задачи; ниша Lead — web-исследования (быстрее, меньше
-таймаутов). **Сноска**: в том прогоне llama-server Ornith-модели был
-недоступен — Team шёл на двух моделях из трёх; полная 3-модельная
-абляция ещё не проводилась. GAIA Lead шёл на старом извлечении ответа
-(с «ФИНАЛЬНЫЙ ОТВЕТ:» маркером прогноз 50%+); GAIA-Team результат
-не сопоставим напрямую. LocAlis-Bench v1 (12 задач) — регрессионный набор.
+Both rows come from a single overnight ablation (Sep 6) on one adapter version
+(v6.3) under equal conditions. Team wins were manually verified:
+`heterogeneous-dates` solved with the byte-exact ground truth 11.428571
+(the meeting caught an off-by-one), `fix-permissions` passed 1/1 in-container
+exec tests. Niche split: Team excels at local file/shell work; Lead wins on
+web research (faster, fewer timeout exposures). **Footnote**: the Ornith
+llama-server was down during that run, so Team ran on two models out of
+three — a full 3-model ablation is still pending. GAIA Lead ran on the old
+answer-extraction (with the new strict marker we project 50%+); the GAIA Team
+run is not directly comparable. LocAlis-Bench v1 (12 tasks) is the internal
+regression set.
 
-Скрипты: `scripts/localis_gaia.py`, `scripts/localis_bench.py`, `scripts/tb20_subset.sh`.
-Адаптер Terminal-Bench: `scripts/localis_tb_agent.py` (требует
-[terminal-bench](https://github.com/laude-institute/terminal-bench) и Docker).
+Scripts: `scripts/localis_gaia.py`, `scripts/localis_bench.py`,
+`scripts/tb20_subset.sh`. Terminal-Bench adapter:
+`scripts/localis_tb_agent.py` (requires
+[terminal-bench](https://github.com/laude-institute/terminal-bench) and Docker).
 
-## Установка
+## Installation
 
-Требования: Windows (проверено) или Linux, Python 3.10+, [Ollama](https://ollama.com);
-для контейнерного инструмента — Docker.
+Requirements: Windows (tested) or Linux, Python 3.10+, [Ollama](https://ollama.com);
+Docker for the container tool.
 
-### Модели
+### Models
 
-**Обязательные** (маленькие, нужны для старта любой задачи):
+**Required** (small, needed to start any task):
 
 ```bash
-ollama pull qwen2.5:3b-instruct   # роутер + secretary (~2 ГБ)
-ollama pull bge-m3:latest          # эмбеддинги базы знаний (~1.2 ГБ)
+ollama pull qwen2.5:3b-instruct   # router + secretary (~2 GB)
+ollama pull bge-m3:latest          # knowledge-base embeddings (~1.2 GB)
 ```
 
-**Опциональные** (ансамбль для orchestrated/team режимов — выберите под своё
-железо, полные аналоги в `config/models.example.yaml`):
+**Optional** (the ensemble for orchestrated/team modes — pick for your
+hardware, full analogs in `config/models.example.yaml`):
 
 ```bash
 ollama pull glm-4.7-flash          # proposer/executor
 ollama pull nemotron-3.5-lightning:30b-a3b-q4_K_M
-# 35B+ модели — через llama.cpp (llama-server), см. notes в models.example.yaml
+# 35B+ models go through llama.cpp (llama-server), see notes in models.example.yaml
 ```
 
-Минимальный старт: только две обязательные модели — платформа работает в
-simple-режиме и с базой знаний. VRAM-арбитр сам разрулит, кто когда в GPU.
+Minimal setup: just the two required models — the platform works in
+simple mode and with the knowledge base. The VRAM arbiter decides who
+enters the GPU and when.
 
-Windows-пользователям: `install_models.bat` в корне репозитория скачает всё
-необходимое одной командой (double-click).
+Windows users: `install_models.bat` in the repo root downloads everything
+in one double-click.
 
-### Установка
+### Setup
 
 ```bash
 git clone <repo-url> localis
@@ -97,39 +102,40 @@ cd localis
 python -m venv .venv
 .venv/Scripts/pip install -r requirements.txt   # Linux: .venv/bin/pip
 
-# настроить конфиг:
+# configure:
 copy config\models.example.yaml config\models.yaml   # Linux: cp ...
-# отредактируйте пути/имена моделей под себя
+# edit paths/model names for your hardware
 
-# запустить панель:
+# launch the panel:
 .venv/Scripts/python.exe main.py --ui
 # → http://127.0.0.1:8080
 ```
 
-Ключи облачных провайдеров (опционально — платформа полноценно работает и без
-них): `python main.py --set-key OPENROUTER_API_KEY=sk-or-v1-...` или переменная
-окружения. Ключи хранятся в `data/secrets.json` (в git не попадает).
+Cloud provider keys are optional — the platform works fully without them:
+`python main.py --set-key OPENROUTER_API_KEY=sk-or-v1-...` or an environment
+variable. Keys are stored in `data/secrets.json` (never committed).
 
-## Использование
+## Usage
 
-- **Панель** (`main.py --ui`) — ввод задачи, живой журнал инструментов, токены/сек каждого вызова модели, статус совещаний и ревью
-- **CLI**: `python main.py --mode orchestrated --task "ваша задача"`
-- **Team-режим**: флаг в панели или `--meta '{"meeting_rounds":3}'`
-- **Бенчмарки**: `python scripts/localis_bench.py --mode lead` / `python scripts/localis_gaia.py --level 1 --mode team`
+- **Panel** (`main.py --ui`) — task input, live tool journal, tokens/sec for every model call, meeting and review status. Interface is in Russian; an English switch is planned.
+- **CLI**: `python main.py --mode orchestrated --task "your task"`
+- **Team mode**: a checkbox in the panel or `--meta '{"meeting_rounds":3}'`
+- **Benchmarks**: `python scripts/localis_bench.py --mode lead` / `python scripts/localis_gaia.py --level 1 --mode team`
 
-## Архитектура (кратко)
+## Architecture (brief)
 
 ```
 Router → Secretary → [Team meeting] → Lead executor (tools)
      → Cross-review (disk facts) → Adversarial review → [auto-fix]
 ```
 
-Ключевые компоненты: `core/llm_gateway.py` (единый вызов всех провайдеров +
-VRAM-арбитр + телеметрия), `core/blackboard.py` (SQLite-журнал решений),
-`tools/` (плагины с манифестами), `workflows/strategies.py` (режимы исполнения).
+Key components: `core/llm_gateway.py` (unified provider calls + VRAM arbiter +
+telemetry), `core/blackboard.py` (SQLite decision journal), `tools/`
+(manifest-based plugins), `workflows/strategies.py` (execution modes).
 
-## Статус
+## Status
 
-Research preview. Работает на машине автора (RTX 3070 8GB VRAM, 40 GB RAM, Windows); установка
-на других конфигурациях требует правки `config/models.yaml` под своё железо.
-Issues приветствуются.
+Research preview. Developed on the author's machine (RTX 3070 8GB VRAM,
+40 GB RAM, Windows); installing on other configurations requires editing
+`config/models.yaml` for your hardware. Issues welcome — see
+[CONTRIBUTING.md](CONTRIBUTING.md).

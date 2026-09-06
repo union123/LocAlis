@@ -1,28 +1,28 @@
 ---
 name: Bug report
-about: Что-то сломалось при установке или работе
+about: Something broke during installation or a run
 title: '[BUG] '
 labels: bug
 assignees: ''
 ---
 
-**Что делали**
-Запуск установки / какая задача / какой бенчмарк.
+**What you did**
+Installation / which task / which benchmark.
 
-**Что ожидали vs что получили**
+**Expected vs actual**
 
-**Окружение**
-- ОС и версия:
+**Environment**
+- OS and version:
 - GPU / VRAM:
 - RAM:
 - Python:
-- Модели (ollama list / llama-server):
-- Конфиг: использовали models.example.yaml как есть или правили?
+- Models (ollama list / llama-server):
+- Config: used models.example.yaml as-is or modified?
 
-**Логи**
+**Logs**
 ```
-вывод main.py --status и/или хвост консоли
+main.py --status output and/or console tail
 ```
 
-**Дополнительно**
-Скриншот панели, ID задачи (если есть).
+**Additional**
+Panel screenshot, task ID if available.

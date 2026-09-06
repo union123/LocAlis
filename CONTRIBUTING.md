@@ -1,9 +1,9 @@
 # Contributing to LocAlis
 
-Спасибо за интерес к проекту! Любой вклад приветствуется — баг-репорты,
-уточнения документации, новые инструменты, фиксы.
+Thanks for your interest in the project! Any contribution is welcome —
+bug reports, documentation fixes, new tools, code changes.
 
-## Быстрый старт
+## Quick start
 
 ```bash
 git clone https://github.com/union123/LocAlis.git localis
@@ -11,43 +11,43 @@ cd localis
 python -m venv .venv
 .venv/Scripts/pip install -r requirements.txt   # Linux: .venv/bin/pip
 
-# минимальные модели (роутер + эмбеддер):
+# minimal models (router + embedder):
 ollama pull qwen2.5:3b-instruct
 ollama pull bge-m3
 
-# конфиг под своё железо:
+# config for your hardware:
 copy config\models.example.yaml config\models.yaml   # Linux: cp
-# отредактируйте пути/имена моделей
+# edit paths/model names
 
-# проверить, что всё живо:
+# sanity checks:
 .venv/Scripts/python.exe main.py --status
 .venv/Scripts/python.exe -m pytest tests/ -q
 ```
 
-## Как сообщить о баге
+## Reporting a bug
 
-Откройте Issue с шаблоном **Bug report**. Очень помогают:
-- вывод `main.py --status`
-- ID задачи из панели (8-символьный, например `e2a9998d`) — по нему в
-  `main.py --show <id>` видна вся цепочка
-- что в консоли/логах в момент сбоя
+Open an Issue using the **Bug report** template. Most helpful:
+- output of `main.py --status`
+- the task ID from the panel (8 characters, e.g. `e2a9998d`) —
+  `main.py --show <id>` prints the full execution chain
+- console/log output at the moment of the failure
 
-## Как предложить фичу
+## Proposing a feature
 
-Issue с шаблоном **Feature request**: какая задача пользователя решается,
-какой минимальный вариант устроил бы.
+Open an Issue with the **Feature request** template: what user problem it
+solves, and the minimal version that would satisfy you.
 
-## Правила
+## Ground rules
 
-- Один PR — одна логическая тема.
-- Тесты: `python -m pytest tests/ -q` — зелёные перед PR.
-- Стиль: PEP8 без фанатизма, типы в сигнатурах публичных функций.
-- Новые инструменты кладите в `tools/<имя>/` с `manifest.yaml` —
-  registry подхватит их автоматически.
-- Не коммитьте `data/`, `config/models.yaml`, `secrets.json` (см. `.gitignore`).
+- One PR = one logical topic.
+- Tests: `python -m pytest tests/ -q` — green before submitting a PR.
+- Style: PEP8 without fanaticism, type hints in public signatures.
+- New tools go into `tools/<name>/` with a `manifest.yaml` — the registry
+  picks them up automatically.
+- Never commit `data/`, `config/models.yaml`, `secrets.json` (see `.gitignore`).
 
-## Замечание по железу
+## Hardware note
 
-Проект разрабатывался на RTX 3070 8GB + 42GB RAM. На других конфигурациях
-правьте `config/models.yaml` (см. `models.example.yaml`). Если ваша машина
-отличается — issue с логом установки очень поможет проекту.
+The project was developed on an RTX 3070 8GB + 42GB RAM machine. On other
+setups, edit `config/models.yaml` (see `models.example.yaml`). If your machine
+is different, an installation-log issue would genuinely help the project.
