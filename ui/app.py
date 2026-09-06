@@ -16,6 +16,7 @@ Control Panel (слой 9) — локальное desktop-приложение, 
 
 from __future__ import annotations
 
+import re
 import threading
 from pathlib import Path
 from typing import Any
