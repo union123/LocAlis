@@ -102,7 +102,7 @@ def _step_card(number: int, title: str, ok: bool, detail: str,
             "rounded-full bg-secondary")
         with ui.column().classes("grow gap-1"):
             with ui.row().classes("items-center gap-2"):
-                ui.icon(icon, name=None).classes(f"{color}")
+                ui.icon(icon).classes(f"{color}")
                 ui.label(title).classes("font-medium")
             ui.label(detail).classes("ap-muted text-sm")
             if action_label and not ok and action_fn:
