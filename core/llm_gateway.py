@@ -551,7 +551,12 @@ class LLMGateway:
     # ---- диагностика для UI ---------------------------------------------
 
     def local_models_available(self) -> dict[str, bool]:
-        """Какие модели из конфига реально скачаны в Ollama (для экрана «Настройки»)."""
+        """Какие модели из конфига реально доступны локально (экран «Настройки»).
+
+        Ollama-модели сверяются с /api/tags с нормализацией тега
+        ("glm-4.7-flash" == "glm-4.7-flash:latest"). llamacpp-модели не живут
+        в Ollama — их доступность это живой llama-server (health-check).
+        """
         try:
             data = self._ollama().list()
         except Exception:  # noqa: BLE001
@@ -561,18 +566,50 @@ class LLMGateway:
             name = item.get("model") if isinstance(item, dict) else getattr(item, "model", None)
             if name:
                 installed.add(str(name))
-        wanted: list[str] = []
+
+        def _in_ollama(name: str) -> bool:
+            if name in installed:
+                return True
+            if ":" not in name:
+                return f"{name}:latest" in installed
+            return name.split(":")[0] in {n.split(":")[0] for n in installed}
+
+        def _llamacpp_alive(extra: dict) -> bool:
+            import urllib.request
+            try:
+                base = (extra or {}).get("base_url", "http://127.0.0.1:8080")
+                with urllib.request.urlopen(base.rstrip("/") + "/health", timeout=3) as r:
+                    return r.status == 200
+            except Exception:  # noqa: BLE001
+                return False
+
+        wanted: list[tuple[str, str, dict]] = []  # (model, provider, extra)
         for role in ("router", "verifier", "embeddings"):
             if self.config.get(role):
-                wanted.append(str(self.config[role]["model"]))
-        for group in ("proposers",):
+                wanted.append((str(self.config[role]["model"]),
+                               str(self.config[role].get("provider", "ollama")),
+                               self.config[role].get("extra") or {}))
+        for group in ("proposers", "lead_agent_extra"):
             for item in self.config.get(group) or []:
-                wanted.append(str(item["model"]))
+                wanted.append((str(item["model"]),
+                               str(item.get("provider", "ollama")),
+                               item.get("extra") or {}))
         # Оркестратор — тоже локальная модель, показываем в статусе
         orch_local = ((self.config.get("orchestrator") or {}).get("local") or {}).get("model")
         if orch_local:
-            wanted.append(str(orch_local))
+            wanted.append((str(orch_local), "ollama", {}))
         local_judge = ((self.config.get("judge") or {}).get("local_fallback") or {}).get("model")
         if local_judge:
-            wanted.append(str(local_judge))
-        return {name: name in installed for name in dict.fromkeys(wanted)}
+            wanted.append((str(local_judge), "ollama", {}))
+
+        result: dict[str, bool] = {}
+        seen: set[str] = set()
+        for name, provider, extra in wanted:
+            if name in seen:
+                continue
+            seen.add(name)
+            if provider == "llamacpp":
+                result[name] = _llamacpp_alive(extra)
+            else:
+                result[name] = _in_ollama(name)
+        return result

@@ -78,6 +78,23 @@ def _check_models() -> tuple[bool, list[str]]:
     return not missing, missing
 
 
+def _check_ensemble() -> tuple[list[str], list[str], list[str]]:
+    """Полная проверка: (доступные модели, недостающие ollama, мёртвые llama-server).
+
+    Использует gateway.local_models_available(): Ollama-модели с нормализацией
+    тега, llamacpp-модели по health их сервера.
+    """
+    try:
+        from workflows.main_graph import Platform
+        platform = STATE.platform
+        available = platform.gateway.local_models_available()
+    except Exception:  # noqa: BLE001
+        return [], [], []
+    ok = [n for n, v in available.items() if v]
+    miss = [n for n, v in available.items() if not v]
+    return ok, miss, []
+
+
 def _check_config() -> tuple[bool, str]:
     cfg = Path("config/models.yaml")
     if cfg.exists():
@@ -142,6 +159,19 @@ def _render_welcome(dlg) -> None:
             1, "Обязательные модели", False,
             "не хватает: " + ", ".join(missing) +
             " — выполните в консоли: ollama pull " + " && ollama pull ".join(missing),
+            "Проверить снова", lambda: (dlg.close(), open_about()))
+
+    # --- шаг 1b: ансамбль (опционально, информационно) ---
+    ens_ok, ens_miss, _ = _check_ensemble()
+    if ens_ok and not ens_miss:
+        _step_card(1, "Ансамбль моделей", True,
+                   "все модели ансамбля доступны (ollama + llama-server)")
+    elif ens_miss:
+        _step_card(
+            1, "Ансамбль моделей", False,
+            "не хватает: " + ", ".join(ens_miss) +
+            " — платформа работает без них в simple-режиме; для orchestrated/team "
+            "скачайте их (см. README, раздел Models)",
             "Проверить снова", lambda: (dlg.close(), open_about()))
 
     # --- шаг 2: конфиг ---
