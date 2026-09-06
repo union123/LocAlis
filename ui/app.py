@@ -357,7 +357,7 @@ def page_dashboard():
                                 ui.label(f"Исполнитель {spec.id[-1].upper()}").classes("ap-muted")
                                 ui.label(spec.model).classes("text-xs ap-mono")
                     except Exception as exc:  # noqa: BLE001
-                        ui.label(f"Ошибка чтения models.yaml: {exc}").classes("text-negative")
+                        ui.label(i18n.t("Ошибка чтения models.yaml: ") + str(exc)).classes("text-negative")
 
             # --- третий ряд: доступность моделей и статистика --------------
             with ui.row().classes("w-full gap-4 items-stretch"):
@@ -1618,22 +1618,20 @@ def page_settings():
             verifier_model = platform.gateway.spec("verifier").model
             cloud_judge, local_judge = platform.gateway.judge_specs()
             lead = bool((platform.settings.get("feature_flags") or {}).get("lead_agent", False))
-            ui.label(f"Маршрутизатор: {router_model}").classes("text-sm")
+            ui.label(i18n.t("Маршрутизатор: ") + str(router_model)).classes("text-sm")
             if lead:
                 ui.label(i18n.t("Режим: Lead Agent — задачу выполняет один сильный "
                          "исполнитель целиком (планировщик LLM не используется)")).classes("text-sm")
                 first = next(iter(platform.gateway.proposer_specs()), None)
-                ui.label(f"Lead-исполнитель: {first.model if first else '—'}").classes("text-sm")
+                ui.label(i18n.t("Lead-исполнитель: ") + (first.model if first else '—')).classes("text-sm")
             else:
-                ui.label(f"Планировщик (резервный многошаговый): "
-                         f"{platform.gateway.orchestrator_spec().model}").classes("text-sm")
+                ui.label(i18n.t("Планировщик (резервный многошаговый): ") + platform.gateway.orchestrator_spec().model).classes("text-sm")
             ui.label(i18n.t("Исполнители: ") + ", ".join(
                 f"{s.id} → {s.model}" for s in platform.gateway.proposer_specs())).classes("text-sm")
-            ui.label(f"Проверяющий (adversarial-ревью): {verifier_model}").classes("text-sm")
-            ui.label(f"Арбитр: облако {cloud_judge.model if cloud_judge else '—'} → "
-                     f"локально {local_judge.model}").classes("text-sm")
+            ui.label(i18n.t("Проверяющий (adversarial-ревью): ") + str(verifier_model)).classes("text-sm")
+            ui.label(i18n.t("Арбитр: облако ") + (cloud_judge.model if cloud_judge else '—') + i18n.t(" → локально ") + local_judge.model).classes("text-sm")
         except Exception as exc:  # noqa: BLE001
-            ui.label(f"Ошибка чтения models.yaml: {exc}").classes("text-red-8")
+            ui.label(i18n.t("Ошибка чтения models.yaml: ") + str(exc)).classes("text-red-8")
         ui.link(i18n.t("Ввести ключи доступа"), "/secrets").classes("text-sm")
         ui.label(i18n.t("Ключ облака вводится на экране «Ключи доступа» или переменной "
                  "OPENROUTER_API_KEY. Без ключа платформа работает полностью локально.")).classes("ap-muted")
@@ -1692,7 +1690,7 @@ def page_settings():
             """Полный рестарт процесса: sys.executable + те же аргументы."""
             if not confirm["armed"]:
                 confirm["armed"] = True
-                restart_btn.text = "Точно перезапустить? Нажмите ещё раз"
+                restart_btn.text = i18n.t("Точно перезапустить? Нажмите ещё раз")
                 ui.notify(i18n.t("Нажмите кнопку ещё раз для подтверждения"), type="warning")
                 return
             import os, subprocess, sys, time
@@ -1712,7 +1710,7 @@ def page_settings():
         def do_shutdown():
             if not confirm.setdefault("armed_off", False):
                 confirm["armed_off"] = True
-                shutdown_btn.text = "Остановить платформу? Нажмите ещё раз"
+                shutdown_btn.text = i18n.t("Остановить платформу? Нажмите ещё раз")
                 ui.notify("Выполняющаяся задача будет прервана! "
                           "Нажмите ещё раз для подтверждения", type="negative")
                 return
