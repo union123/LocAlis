@@ -20,6 +20,7 @@ from pathlib import Path
 from nicegui import ui
 
 from ui.state import STATE
+from ui import i18n
 
 _WELCOME_FILE = Path("data/welcome_state.json")
 
@@ -135,11 +136,11 @@ def _render_welcome(dlg) -> None:
 
     all_ok = ollama_ok and models_ok and cfg_ok
 
-    ui.label("Добро пожаловать в LocAlis").classes("text-2xl font-semibold")
-    ui.label(
+    ui.label(i18n.t("Добро пожаловать в LocAlis")).classes("text-2xl font-semibold")
+    ui.label(i18n.t(
         "Локальная мультиагентная платформа: модели обсуждают план, "
         "исполняют его инструментами и проверяют друг друга — без облака."
-    ).classes("ap-muted")
+    )).classes("ap-muted")
 
     ui.separator()
 
@@ -157,7 +158,7 @@ def _render_welcome(dlg) -> None:
     else:
         _step_card(
             1, "Обязательные модели", False,
-            "не хватает: " + ", ".join(missing) +
+            i18n.t("не хватает: ") + ", ".join(missing) +
             " — выполните в консоли: ollama pull " + " && ollama pull ".join(missing),
             "Проверить снова", lambda: (dlg.close(), open_about()))
 
@@ -176,7 +177,7 @@ def _render_welcome(dlg) -> None:
 
     # --- шаг 2: конфиг ---
     _step_card(2, "Конфигурация моделей", cfg_ok, cfg_detail,
-               "Открыть папку config",
+               i18n.t("Открыть папку config"),
                lambda: os.startfile(str(Path("config").resolve()))  # noqa: S606
                if hasattr(os, "startfile") else None)
 
@@ -184,7 +185,7 @@ def _render_welcome(dlg) -> None:
 
     # --- шаг 3: готово / старт ---
     if all_ok:
-        ui.label("Всё готово — можно работать.").classes("text-green-500")
+        ui.label(i18n.t("Всё готово — можно работать.")).classes("text-green-500")
 
         def _start() -> None:
             st = _load()
@@ -193,11 +194,11 @@ def _render_welcome(dlg) -> None:
             dlg.close()
             ui.navigate.to("/new")
 
-        ui.button("Начать", on_click=_start).props("unelevated")
+        ui.button(i18n.t("Начать"), on_click=_start).props("unelevated")
     else:
         ui.label("Выполните шаги выше и откройте этот экран снова "
                  "(кнопка «?» в шапке).").classes("ap-muted")
-        ui.button("Проверить снова",
+        ui.button(i18n.t("Проверить снова"),
                   on_click=lambda: (dlg.close(), open_about())).props("outline")
 
     # подпись внизу
@@ -206,9 +207,9 @@ def _render_welcome(dlg) -> None:
             _save({**_load(), "seen": True})
             dlg.close()
             ui.navigate.to("/new")
-        ui.link("Пропустить и не показывать больше", "#").on(
+        ui.link(i18n.t("Пропустить и не показывать больше"), "#").on(
             "click", _skip, handler=_skip) if False else ui.button(
-            "Пропустить и не показывать больше", on_click=_skip).props("flat")
+            i18n.t("Пропустить и не показывать больше"), on_click=_skip).props("flat")
 
 
 import os  # noqa: E402  (os.startfile — только Windows)
