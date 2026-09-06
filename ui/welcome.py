@@ -172,8 +172,13 @@ def _render_welcome(dlg) -> None:
 
     # подпись внизу
     with ui.row().classes("w-full justify-end"):
-        ui.link("Пропустить и не показывать больше",
-                "/new").on(lambda: _save({**_load(), "seen": True}))
+        def _skip() -> None:
+            _save({**_load(), "seen": True})
+            dlg.close()
+            ui.navigate.to("/new")
+        ui.link("Пропустить и не показывать больше", "#").on(
+            "click", _skip, handler=_skip) if False else ui.button(
+            "Пропустить и не показывать больше", on_click=_skip).props("flat")
 
 
 import os  # noqa: E402  (os.startfile — только Windows)
