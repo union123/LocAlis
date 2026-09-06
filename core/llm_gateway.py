@@ -466,15 +466,28 @@ class LLMGateway:
         offload). Адрес берётся из spec.extra["base_url"] или дефолт :8080."""
         import json as _json
         import urllib.request
-        base = (spec.extra or {}).get("base_url", "http://127.0.0.1:8080")
+        ex = dict(spec.extra or {})
+        # Some config loaders nest the original extra dict one level deeper;
+        # read both shapes so base_url/server_model/no_think always resolve.
+        nested = ex.get("extra") if isinstance(ex.get("extra"), dict) else {}
+        merged = {**nested, **{k: v for k, v in ex.items() if k != "extra"}}
+        base = merged.get("base_url", "http://127.0.0.1:8080")
         url = base.rstrip("/") + "/v1/chat/completions"
         payload: dict[str, Any] = {
-            "model": (spec.extra or {}).get("server_model", spec.model),
+            "model": merged.get("server_model", spec.model),
             "messages": [{"role": m["role"], "content": str(m["content"])}
                          for m in messages],
             "temperature": spec.temperature,
             "stream": False,
         }
+        # Ornith/Qwen-class thinking models: without these flags the model burns
+        # the whole num_predict budget on reasoning and content comes back empty
+        # (see quality-suite pitfall). Both keys together = the proven combo.
+        if merged.get("no_think", False):
+            payload["chat_template_kwargs"] = {"enable_thinking": False}
+            msgs = payload["messages"]
+            if msgs and "/no_think" not in msgs[-1]["content"]:
+                msgs[-1]["content"] += " /no_think"
         if tools and getattr(spec, "supports_tools", False):
             payload["tools"] = tools
             payload["tool_choice"] = "auto"
