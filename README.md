@@ -109,20 +109,36 @@ in one double-click.
 
 ### Setup
 
+**Step 0. Python 3.10–3.12 is required** (3.13+ will fail — faiss-cpu and
+parts of langchain have no wheels yet). Check: `python --version`.
+
 ```bash
-git clone <repo-url> localis
+git clone https://github.com/union123/LocAlis.git localis
 cd localis
 python -m venv .venv
-.venv/Scripts/pip install -r requirements.txt   # Linux: .venv/bin/pip
+
+# Windows (cmd):
+.venv\Scripts\activate
+# Windows (PowerShell):
+.venv\Scripts\Activate.ps1
+# Linux/macOS:
+source .venv/bin/activate
+
+pip install -r requirements.txt
 
 # configure:
-copy config\models.example.yaml config\models.yaml   # Linux: cp ...
+copy config\models.example.yaml config\models.yaml   # Linux/macOS: cp ...
 # edit paths/model names for your hardware
 
-# launch the panel:
-.venv/Scripts/python.exe main.py --ui
+# launch the panel (from the activated venv):
+python main.py --ui
 # → http://127.0.0.1:8080
 ```
+
+Troubleshooting: if `pip install` fails on Python 3.13+ — install
+[Python 3.11](https://www.python.org/downloads/) and recreate the venv
+with `py -3.11 -m venv .venv`. If activation is blocked in PowerShell, run:
+`Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` and try again.
 
 Cloud provider keys are optional — the platform works fully without them:
 `python main.py --set-key OPENROUTER_API_KEY=sk-or-v1-...` or an environment
