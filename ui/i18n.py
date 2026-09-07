@@ -13,6 +13,20 @@ from pathlib import Path
 _LANG_FILE = Path("data/ui_lang.json")
 
 _EN: dict[str, str] = {
+    "Lead Agent: планировщик LLM не используется — один сильный исполнитель делает задачу целиком с полным контекстом. Настройки ниже относятся к резервному многошаговому режиму (флаг lead_agent выключен в Настройках).": "Lead Agent: no LLM planner — one strong executor runs the whole task with full context. The settings below apply to the fallback multi-step mode (lead_agent flag disabled in Settings).",
+    "геодомен (QGIS)": "geo domain (QGIS)",
+    "Список моделей задаётся в config/models.yaml. Добавление модели не требует изменения кода — см. CONTRIBUTING_MODELS.md.": "The model list lives in config/models.yaml. Adding a model requires no code changes — see CONTRIBUTING_MODELS.md.",
+    "Совещание: все модели предлагают планы, видят планы коллег, улучшают свои. Затем арбитр сводит консенсус. После выполнения — взаимная проверка крест-накрест. Выполняет команда целиком: все три модели.": "Meeting: all models propose plans, see each other's plans and improve their own. The arbiter then merges a consensus. After execution — cross-review. The whole team executes: all three models.",
+    "Режим: Lead Agent — задачу выполняет один сильный исполнитель целиком (планировщик LLM не используется)": "Mode: Lead Agent — one strong executor runs the whole task (no LLM planner)",
+    "Перезагрузка компонентов применяет изменения конфигов, моделей и инструментов без закрытия панели. Полный рестарт нужен после правок кода (агентов, интерфейса): он перезапускает процесс целиком.": "Component reload applies config, model and tool changes without closing the panel. A full restart is needed after code changes (agents, UI): it restarts the whole process.",
+    "Ключ облака вводится на экране «Ключи доступа» или переменной OPENROUTER_API_KEY. Без ключа платформа работает полностью локально.": "The cloud key is entered on the “API keys” screen or via the OPENROUTER_API_KEY variable. Without a key the platform runs fully locally.",
+    "Готовых инструментов нет — откройте экран «Инструменты», там видна причина.": "No tools ready — open the “Tools” screen to see the reason.",
+    "Выключенный узел исключается из графа целиком — полезно для отладки и ускорения.": "A disabled node is excluded from the graph entirely — useful for debugging and speed.",
+    "Внимание: этот ключ задан переменной окружения системы — она имеет приоритет над введённым здесь значением.": "Note: this key is set by a system environment variable — it takes priority over the value entered here.",
+    "В Lead Agent-режиме эти настройки не применяются: исполнитель — первый proposer из config/models.yaml (сейчас glm-4.7-flash). Резервный многошаговый режим включается флагом lead_agent=false в Настройках.": "In Lead Agent mode these settings do not apply: the executor is the first proposer from config/models.yaml (currently glm-4.7-flash). The fallback multi-step mode is enabled with lead_agent=false in Settings.",
+    "Больше контекст = больше VRAM под KV-кеш. 128K — только для очень длинных задач; на 8 ГБ VRAM безопасно 32–64K.": "More context = more VRAM for the KV cache. 128K is for very long tasks only; 32–64K is safe on 8 GB VRAM.",
+    "<span class=\"ap-chip ap-chip-domain\">геодомен</span>": "<span class=\"ap-chip ap-chip-domain\">geo domain</span>",
+    ". Он исключён из системы контроля версий. Шифрование не применяется, поэтому не открывайте доступ к этой папке другим пользователям компьютера.": ". It is excluded from version control. No encryption is applied, so do not grant other users of this computer access to this folder.",
     "📚 База знаний: ": "📚 Knowledge base: ",
     "📋 Консенсус-план: ": "📋 Consensus plan: ",
     "💥 Крах стратегии ": "💥 Strategy crash ",
