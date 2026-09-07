@@ -109,6 +109,22 @@ in one double-click.
 
 ### Setup
 
+**Repo layout** (so you know where things live):
+
+```
+LocAlis/
+├── main.py                  # entry point (panel + CLI)
+├── requirements.txt         # python dependencies (in the ROOT)
+├── install_models.bat       # downloads all required models (ROOT)
+├── config/
+│   ├── models.example.yaml  # copy to models.yaml and edit
+│   └── settings.yaml
+├── agents/  core/  tools/  workflows/   # platform code
+├── scripts/                 # benchmark utilities only
+├── ui/                      # control panel
+└── tests/
+```
+
 **Option A — ZIP (no git needed):**
 
 1. On the repo page click **Code → Download ZIP**, unpack anywhere
