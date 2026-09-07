@@ -84,8 +84,21 @@ hardware, full analogs in `config/models.example.yaml`):
 ```bash
 ollama pull glm-4.7-flash          # proposer/executor
 ollama pull nemotron-3.5-lightning:30b-a3b-q4_K_M
-# 35B+ models go through llama.cpp (llama-server), see notes in models.example.yaml
 ```
+
+**35B+ models run through llama.cpp (`llama-server`), not Ollama.**
+Example - the default `proposer_b` (Ornith-1.5-35B-A3B MoE, ~20 GB GGUF Q4_K_M):
+
+```bash
+llama-server --model C:/path/to/Ornith-1.5-35B-Q4_K_M.gguf ^
+  --alias ornith15 -ngl 99 --cpu-moe -c 32768 --flash-attn on --port 8081
+```
+
+- `--alias` must match the `model:` field in `config/models.yaml`; the model connects via `provider: llamacpp` with `base_url: http://127.0.0.1:8081`
+- `--cpu-moe` keeps the MoE experts in RAM (~11 t/s on a Ryzen + RTX 3070 setup); drop it if your GPU fits the whole model
+- thinking models need `no_think: true` in the model's `extra:` section - otherwise they burn the whole token budget on reasoning and return an empty answer
+- one llama-server per port; do not run two models on the same port at once
+- start the server before orchestrated/team tasks; the welcome screen checks its health along with the Ollama models
 
 Minimal setup: just the two required models — the platform works in
 simple mode and with the knowledge base. The VRAM arbiter decides who
