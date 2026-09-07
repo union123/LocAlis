@@ -109,6 +109,18 @@ in one double-click.
 
 ### Setup
 
+**Option A — ZIP (no git needed):**
+
+1. On the repo page click **Code → Download ZIP**, unpack anywhere
+2. Open a terminal **inside the unpacked folder** (the one containing
+   `main.py` and `requirements.txt`)
+3. Continue from Step 0 below — everything else is the same
+
+*(To get updates later you will need to re-download the ZIP; with git,
+updates are one `git pull` — that is the only difference.)*
+
+**Option B — git clone:**
+
 **Step 0. Python 3.10–3.12 is required** (3.13+ will fail — faiss-cpu and
 parts of langchain have no wheels yet). Check: `python --version`.
 
