@@ -147,15 +147,32 @@ _NODE_RU = {
     "orchestrator": i18n.t("Оркестратор (план и шаги)"),
     "secretary_persist": i18n.t("Секретарь (запись результата)"),
 }
+_NODE_RU_EN = {
+    "router": i18n.t("Router"),
+    "retrieval": i18n.t("Knowledge base search"),
+    "secretary": i18n.t("Secretary (context summary)"),
+    "proposers": i18n.t("Executors (3 models)"),
+    "verifier": i18n.t("Verifier (2-of-3 voting)"),
+    "judge": i18n.t("Arbiter"),
+    "orchestrator": i18n.t("Orchestrator (plan & steps)"),
+    "secretary_persist": i18n.t("Secretary (result recording)"),
+}
 
 _MODE_RU = {
     "auto": i18n.t("автоматический"),
     "local_only": i18n.t("строго локальный"),
     "orchestrated": i18n.t("оркестратор"),
 }
+_MODE_RU_EN = {
+    "auto": i18n.t("automatic"),
+    "local_only": i18n.t("strictly local"),
+    "orchestrated": i18n.t("orchestrator"),
+}
 
 _PLACEMENT_RU = {"cloud": i18n.t("облачный планировщик"), "local": i18n.t("локальный планировщик"),
                  "auto": i18n.t("планировщик выбирается автоматически")}
+_PLACEMENT_RU_EN = {"cloud": i18n.t("cloud planner"), "local": i18n.t("local planner"),
+                 "auto": i18n.t("planner chosen automatically")}
 
 # Кто принял итоговое решение — техническое значение переводим в понятное
 _DECIDED_RU = {
@@ -166,6 +183,15 @@ _DECIDED_RU = {
     "orchestrator_local": i18n.t("оркестратор (локальная сборка)"),
     "simple_orchestrated": i18n.t("один исполнитель (SIMPLE)"),
     "fallback": i18n.t("резервный путь"),
+}
+_DECIDED_RU_EN = {
+    "verifier_consensus": i18n.t("executor consensus (2 of 3)"),
+    "judge_cloud": i18n.t("cloud arbiter"),
+    "judge_local": i18n.t("local arbiter"),
+    "orchestrator_cloud": i18n.t("orchestrator (cloud assembly)"),
+    "orchestrator_local": i18n.t("orchestrator (local assembly)"),
+    "simple_orchestrated": i18n.t("single executor (SIMPLE)"),
+    "fallback": i18n.t("fallback path"),
 }
 
 # Состояние шага -> (значок, цвет, подпись)
@@ -302,7 +328,7 @@ def page_dashboard():
                 default_mode = str(platform.settings.get("mode", "auto"))
                 kpi(i18n.t("Режим работы"),
                     i18n.t("Локальный") if status.mode == "local_only" else i18n.t("Локально + облако"),
-                    f"по умолчанию: {_MODE_RU.get(default_mode, default_mode)}",
+                    i18n.t("по умолчанию: ") + str((_MODE_RU if i18n._lang() == "ru" else _MODE_RU_EN).get(default_mode, default_mode)),
                     "shield_moon" if status.mode == "local_only" else "public")
                 kpi(i18n.t("Облачные модели"),
                     i18n.t("Доступны") if status.allowed else i18n.t("Недоступны"),
@@ -326,7 +352,7 @@ def page_dashboard():
                                 "half-open": i18n.t("проверка соединения")}
                     ui.label(state_ru.get(status.breaker_state, status.breaker_state)
                              ).classes("text-sm")
-                    ui.label(f"сбоев подряд: {status.fail_counter}").classes("ap-muted ap-mono")
+                    ui.label(i18n.t("сбоев подряд: ") + str(status.fail_counter)).classes("ap-muted ap-mono")
                     with ui.row().classes("gap-2 mt-1"):
                         ui.button(i18n.t("Сбросить"), icon="restart_alt", on_click=lambda: (
                             platform.mode_controller.reset_breaker(), refresh(),
@@ -355,7 +381,7 @@ def page_dashboard():
                         ui.separator().style("background:#2f3548")
                         for spec in platform.gateway.proposer_specs():
                             with ui.row().classes("items-center justify-between w-full"):
-                                ui.label(f"Исполнитель {spec.id[-1].upper()}").classes("ap-muted")
+                                ui.label(i18n.t("Исполнитель ") + spec.id[-1].upper()).classes("ap-muted")
                                 ui.label(spec.model).classes("text-xs ap-mono")
                     except Exception as exc:  # noqa: BLE001
                         ui.label(i18n.t("Ошибка чтения models.yaml: ") + str(exc)).classes("text-negative")
@@ -387,7 +413,7 @@ def page_dashboard():
                         with ui.column().classes("gap-0 w-full"):
                             with ui.row().classes("items-center justify-between w-full"):
                                 ui.label(item["tool"]).classes("text-xs")
-                                ui.label(f"{item['ok']} из {item['calls']} успешно"
+                                ui.label(str(item['ok']) + i18n.t(" из ") + str(item['calls']) + i18n.t(" успешно")
                                          ).classes("ap-muted")
                             ui.linear_progress(value=share, show_value=False,
                                                size="6px").classes("w-full")
@@ -398,11 +424,10 @@ def page_dashboard():
                 from core.blackboard import BLACKBOARD_VERSION
                 from core.tool_registry import REGISTRY_VERSION
                 from workflows.main_graph import GRAPH_VERSION
-                ui.label(f"граф выполнения: {GRAPH_VERSION}").classes("text-xs")
-                ui.label(f"реестр инструментов: {REGISTRY_VERSION}").classes("text-xs")
-                ui.label(f"хранилище: {BLACKBOARD_VERSION} "
-                         f"(схема БД v{stats['schema_version']})").classes("text-xs")
-                ui.label(f"интерфейс: {UI_VERSION}").classes("text-xs")
+                ui.label(i18n.t("граф выполнения: ") + str(GRAPH_VERSION)).classes("text-xs")
+                ui.label(i18n.t("реестр инструментов: ") + str(REGISTRY_VERSION)).classes("text-xs")
+                ui.label(i18n.t("хранилище: ") + str(BLACKBOARD_VERSION) + i18n.t(" (схема БД v") + str(stats['schema_version']) + ")").classes("text-xs")
+                ui.label(i18n.t("интерфейс: ") + str(UI_VERSION)).classes("text-xs")
 
     refresh()
     with ui.row().classes("mt-4 gap-2"):
@@ -573,7 +598,7 @@ def page_new_task():
                 for pspec in platform.gateway.proposer_specs():
                     if pspec.model not in candidate_models:
                         candidates.append(pspec)
-                planner_options = {"": f"По умолчанию — {default_planner or i18n.t('из конфига')}"}
+                planner_options = {"": i18n.t("По умолчанию — ") + str(default_planner or i18n.t("из конфига"))}
                 for spec in candidates:
                     planner_options[spec.model] = str(
                         spec.extra.get("label") or spec.model)
@@ -625,7 +650,7 @@ def page_new_task():
             broken = [e for e in platform.registry.entries.values()
                       if e.status.value in ("error", "unavailable")]
             for entry in broken:
-                ui.label(f"Не готов: {entry.name} — {entry.message[:110]}"
+                ui.label(i18n.t("Не готов: ") + entry.name + " — " + entry.message[:110]
                          ).classes("text-warning text-xs")
 
         def start():
@@ -677,9 +702,9 @@ def page_new_task():
                     elif final is not None:
                         log.final_answer = final.answer
                         log.final_meta = (
-                            f"Решение: {_DECIDED_RU.get(final.decided_by, final.decided_by)}"
-                            f" · модель {final.model}"
-                            f" · {'облако' if final.used_cloud else 'локально'}")
+                            i18n.t("Решение: ") + str(_DECIDED_RU.get(final.decided_by, final.decided_by))
+                            + i18n.t(" · модель ") + str(final.model)
+                            + " · " + (i18n.t("облако") if final.used_cloud else i18n.t("локально")))
                     log.proposals = [
                         {"id": p.proposer_id, "model": p.model, "ok": p.ok,
                          "answer": p.answer or (p.error or ""), "ms": p.latency_ms,
@@ -728,8 +753,8 @@ def render_plan_panel(log, task_id: str = "", on_rerun=None) -> None:
         if log.plan_error:
             with ui.row().classes("items-start gap-2"):
                 _icon("warning").classes("text-warning text-sm mt-1")
-                ui.label(f"Планировщик не справился: {log.plan_error}. "
-                         "Задача передана одному исполнителю целиком."
+                ui.label(i18n.t("Планировщик не справился: ") + str(log.plan_error)
+                         + i18n.t(". Задача передана одному исполнителю целиком.")
                          ).classes("ap-muted")
 
         if log.plan_steps:
@@ -738,12 +763,12 @@ def render_plan_panel(log, task_id: str = "", on_rerun=None) -> None:
             total = len(log.plan_steps)
             ui.linear_progress(value=done / total, show_value=False,
                                size="8px").classes("w-full")
-            parts = [f"готово {done} из {total}"]
+            parts = [i18n.t("готово ") + str(done) + i18n.t(" из ") + str(total)]
             if failed:
-                parts.append(f"со сбоем: {failed}")
+                parts.append(i18n.t("со сбоем: ") + str(failed))
             suspicious = sum(1 for s in log.plan_steps if s.get("warnings"))
             if suspicious:
-                parts.append(f"с вопросами: {suspicious}")
+                parts.append(i18n.t("с вопросами: ") + str(suspicious))
             ui.label(" · ".join(parts)).classes("ap-muted")
 
         for step in log.plan_steps:
@@ -757,7 +782,7 @@ def render_plan_panel(log, task_id: str = "", on_rerun=None) -> None:
                 with ui.column().classes("gap-0 grow"):
                     title = step.get("title") or step.get("id")
                     ui.label(f"{step.get('id')}. {title}").classes("text-sm font-bold")
-                    meta = [f"исполнитель: {step.get('assignee') or '—'}"]
+                    meta = [i18n.t("исполнитель: ") + str(step.get('assignee') or '—')]
                     if step.get("model"):
                         meta.append(str(step["model"]))
                     if step.get("tools"):
@@ -765,7 +790,7 @@ def render_plan_panel(log, task_id: str = "", on_rerun=None) -> None:
                     if step.get("depends_on"):
                         meta.append(i18n.t("после ") + ", ".join(step["depends_on"]))
                     if step.get("ms"):
-                        meta.append(f"{step['ms']} мс")
+                        meta.append(str(step['ms']) + i18n.t(" мс"))
                     ui.label(" · ".join(meta)).classes("ap-muted")
                     for warning in step.get("warnings") or []:
                         with ui.row().classes("items-start gap-1"):
@@ -796,8 +821,7 @@ def page_run():
     # следующий не начнётся.
     def stop_task():
         STATE.request_stop()
-        ui.notify("Стоп запрошен: текущий вызов модели доиграет, "
-                  "затем задача остановится", type="warning")
+        ui.notify(i18n.t("Стоп запрошен: текущий вызов модели доиграет, затем задача остановится"), type="warning")
 
     ui.button(i18n.t("Остановить задачу"), icon="stop_circle", on_click=stop_task).props(
         "color=negative outline size=md")
@@ -880,19 +904,19 @@ def page_run():
                         tail = (" · " + ", ".join(facts)) if facts else ""
                         log_line(f"✓ {_NODE_RU.get(node, node)}{tail}", "text-positive", 1)
                     elif kind == "node_skip":
-                        log_line(f"↷ пропущен {_NODE_RU.get(event.get('node', ''), '')}: "
+                        log_line(i18n.t("↷ пропущен ") + str((_NODE_RU if i18n._lang() == "ru" else _NODE_RU_EN).get(event.get('node', ''), '')) + ": "
                                  f"{event.get('reason')}", "ap-muted", 1)
                     elif kind == "plan_start":
-                        log_line(f"⁂ планирование: {event.get('model')} "
+                        log_line(i18n.t("⁂ планирование: ") + str(event.get('model')) + " "
                                  f"({_PLACEMENT_RU.get(str(event.get('placement')), '')})",
                                  "text-accent", 1)
                     elif kind == "plan_ready":
-                        log_line(f"✓ план готов, шагов: {event.get('steps')}", "text-positive", 1)
+                        log_line(i18n.t("✓ план готов, шагов: ") + str(event.get('steps')), "text-positive", 1)
                     elif kind == "plan_error":
-                        log_line(f"✗ планировщик {event.get('model')}: "
+                        log_line(i18n.t("✗ планировщик ") + str(event.get('model')) + ": "
                                  f"{str(event.get('error'))[:150]}", "text-warning", 1)
                     elif kind == "step_start":
-                        log_line(f"▷ шаг {event.get('step_id')} «{event.get('title')}» → "
+                        log_line(i18n.t("▷ шаг ") + str(event.get('step_id')) + " «" + str(event.get('title')) + "» → "
                                  f"{event.get('assignee')} ({event.get('model')})",
                                  "text-info font-bold", 1)
                     elif kind == "step_end":
@@ -900,7 +924,7 @@ def page_run():
                         warns = event.get("warnings") or []
                         mark = "✓" if ok else "✗"
                         extra = f": {str(event.get('error'))[:120]}" if not ok else ""
-                        log_line(f"{mark} шаг {event.get('step_id')} за {event.get('ms')} мс{extra}",
+                        log_line(mark + i18n.t(" шаг ") + str(event.get('step_id')) + i18n.t(" за ") + str(event.get('ms')) + i18n.t(" мс") + extra,
                                  "text-positive" if ok else "text-negative", 1)
                         for warning in warns:
                             log_line(f"⚠ {warning}", "text-warning", 2)
@@ -915,7 +939,7 @@ def page_run():
                                  f"{str(event.get('summary') or event.get('error'))[:190]}",
                                  _status_color(ok), 3)
                     elif kind == "meeting_round":
-                        log_line(f"⁂ Совещание, раунд {event.get('round')}/{event.get('of')}",
+                        log_line(i18n.t("⁂ Совещание, раунд ") + str(event.get('round')) + "/" + str(event.get('of')),
                                  "text-accent font-bold", 1)
                     elif kind == "meeting_speech":
                         full = str(event.get("full_text") or "")
@@ -932,7 +956,7 @@ def page_run():
                                  "text-positive", 1)
                         cons_full = str(event.get("consensus_text") or "")
                         with ui.expansion(
-                                f"📋 Консенсус-план: {cons_full[:120]}…",
+                                i18n.t("📋 Консенсус-план: ") + cons_full[:120] + "…",
                                 caption=i18n.t("полный план согласован командой"),
                                 icon="description").classes("w-full").style(
                                 "border:1px solid #2f3548; border-radius:8px"):
@@ -940,23 +964,21 @@ def page_run():
                     elif kind == "adversarial_review":
                         ok = event.get("ok")
                         issues = event.get("issues_preview") or ""
-                        log_line(f"{'✓' if ok else '✗'} Adversarial-ревью: {issues[:150]}",
+                        log_line(("✓" if ok else "✗") + i18n.t(" Adversarial-ревью: ") + issues[:150],
                                  "text-positive" if ok else "text-negative", 1)
                     elif kind == "lead_fallback":
-                        log_line(f"↻ Fallback: {event.get('from')} недоступна, "
-                                 f"повтор на локальной модели", "text-warning", 1)
+                        log_line(i18n.t("↻ Fallback: ") + str(event.get('from')) + i18n.t(" недоступна, повтор на локальной модели"), "text-warning", 1)
                     elif kind == "knowledge_context":
-                        log_line(f"📚 База знаний: {event.get('chunks', 0)} "
-                                 f"релевантных чанков в контекст", "text-info", 1)
+                        log_line(i18n.t("📚 База знаний: ") + str(event.get('chunks', 0)) + i18n.t(" релевантных чанков в контекст"), "text-info", 1)
                     elif kind == "llm_tps":
-                        log_line(f"⚡ {event.get('model')}: {event.get('tps')} т/с "
-                                 f"({event.get('eval_count')} ток. за "
-                                 f"{event.get('latency_ms', 0)/1000:.1f}с)", "muted", 1)
+                        log_line("⚡ " + str(event.get('model')) + ": " + str(event.get('tps')) + i18n.t(" т/с (")
+                                 + str(event.get('eval_count')) + i18n.t(" ток. за ")
+                                 + f"{event.get('latency_ms', 0)/1000:.1f}" + "s)", "muted", 1)
                     elif kind == "strategy_crash":
-                        log_line(f"💥 Крах стратегии {event.get('where')}: "
-                                 f"{event.get('error')[:200]}", "text-negative", 1)
+                        log_line(i18n.t("💥 Крах стратегии ") + str(event.get('where')) + ": "
+                                 + str(event.get('error')[:200]), "text-negative", 1)
                     elif kind == "rerun_start":
-                        log_line(f"↻ повторный прогон шага {event.get('step_id')}",
+                        log_line(i18n.t("↻ повторный прогон шага ") + str(event.get('step_id')),
                                  "text-warning font-bold")
                     elif kind == "error":
                         log_line(f"! {str(event.get('error'))[:250]}", "text-negative", 1)
@@ -1087,14 +1109,14 @@ def page_task_detail(task_id: str):
                 def rerun(step: dict) -> None:
                     """Повторить один шаг и пересобрать итог задачи."""
                     step_id = str(step.get("id"))
-                    ui.notify(f"Повторяю шаг {step_id}...", type="ongoing")
+                    ui.notify(i18n.t("Повторяю шаг ") + str(step_id) + "...", type="ongoing")
 
                     def worker():
                         from workflows.main_graph import Workflow
                         try:
                             Workflow(platform).rerun_step(task_id, step_id)
                         except Exception as exc:  # noqa: BLE001
-                            print(f"Повтор шага не удался: {exc}")
+                            print(i18n.t("Повтор шага не удался: ") + str(exc))
 
                     threading.Thread(target=worker, daemon=True).start()
 
@@ -1108,10 +1130,10 @@ def page_task_detail(task_id: str):
                         mark = i18n.t("успех") if result.ok else i18n.t("сбой")
                         warn = i18n.t(" · есть вопросы") if result.warnings else ""
                         with ui.expansion(
-                            f"{result.step_id}. {result.title} — {result.assignee} · "
-                            f"{mark}{warn} · {result.latency_ms} мс"
+                            str(result.step_id) + ". " + str(result.title) + " — " + str(result.assignee) + " · "
+                            + mark + warn + " · " + str(result.latency_ms) + i18n.t(" мс")
                         ).classes("w-full ap-card-soft"):
-                            ui.label(f"модель: {result.model}").classes("ap-muted")
+                            ui.label(i18n.t("модель: ") + str(result.model)).classes("ap-muted")
                             for warning in result.warnings:
                                 ui.label(f"⚠ {warning}").classes("text-warning text-xs")
                             ui.markdown((result.answer or result.error or "—")[:6000])
@@ -1143,8 +1165,8 @@ def page_task_detail(task_id: str):
                                             ).classes(f"{_status_color(proposal.ok)} text-sm")
                                     ui.label(proposal.proposer_id).classes("text-sm font-bold")
                                 ui.label(proposal.model).classes("ap-muted")
-                                meta = [f"{proposal.latency_ms} мс",
-                                        f"инструментов: {len(proposal.tool_results)}"]
+                                meta = [str(proposal.latency_ms) + i18n.t(" мс"),
+                                        i18n.t("инструментов: ") + str(len(proposal.tool_results))]
                                 if proposal.proposer_id in agreeing:
                                     meta.append(i18n.t("в согласии"))
                                 ui.label(" · ".join(meta)).classes("ap-muted")
@@ -1296,16 +1318,16 @@ def page_knowledge():
                 return
             try:
                 kb = get_kb()
-                r = kb.add_document(f"note://{note_title.value or 'заметка'}",
+                r = kb.add_document("note://" + (note_title.value or i18n.t("заметка")),
                                     text,
                                     title=note_title.value or i18n.t("заметка"),
                                     tags=note_tags.value or "")
                 kb.close()
             except Exception as exc:
-                ui.notify(f"Ошибка: {exc}", type="negative")
+                ui.notify(i18n.t("Ошибка: ") + str(exc), type="negative")
                 return
             if r.get("ok"):
-                ui.notify(f"Добавлено ({r['chunks']} чанков)")
+                ui.notify(i18n.t("Добавлено (") + str(r['chunks']) + i18n.t(" чанков)"))
                 note_title.value = note_text.value = note_tags.value = ""
                 render_docs()
             else:
@@ -1319,8 +1341,7 @@ def page_knowledge():
             "outlined dense clearable")
         search_btn = ui.button(icon="search").props("flat round dense")
         ui.space()
-        refresh_btn = ui.button(icon="refresh").props("flat round dense "
-                                                      "tooltip=Обновить")
+        refresh_btn = ui.button(icon="refresh").props("flat round dense tooltip=" + i18n.t("Обновить"))
 
     results_col = ui.column().classes("w-full gap-2")
     docs_table = ui.column().classes("w-full gap-1")
@@ -1333,7 +1354,7 @@ def page_knowledge():
                 docs = kb.list_documents()
                 kb.close()
             except Exception as exc:
-                ui.label(f"Ошибка чтения базы: {exc}").classes("text-negative")
+                ui.label(i18n.t("Ошибка чтения базы: ") + str(exc)).classes("text-negative")
                 return
             if not docs:
                 ui.label(i18n.t("База пуста. Добавь знания через задачи или "
@@ -1341,8 +1362,8 @@ def page_knowledge():
                 return
             for d in docs:
                 with ui.expansion(
-                        f"{d['title']}  ·  {d['chunk_count']} чанков",
-                        caption=f"{d['doc_type']} | теги: {d['tags'] or '—'} | "
+                        str(d['title']) + "  ·  " + str(d['chunk_count']) + i18n.t(" чанков"),
+                        caption=str(d['doc_type']) + i18n.t(" | теги: ") + str(d['tags'] or '—') + " | "
                                 f"{d['added_at'][:16]}",
                         icon="description").classes("w-full").style(
                         "border:1px solid #2f3548; border-radius:8px"):
@@ -1362,7 +1383,7 @@ def page_knowledge():
                     (h.get("source") or "")[:40]) if x)
                 with ui.expansion(
                         f"{i}. [{h['via']} {h['score']:.2f}] {h['title']}",
-                        caption=meta or f"чанк {h['chunk_no']}",
+                        caption=meta or i18n.t("чанк ") + str(h['chunk_no']),
                         icon="search").classes("w-full").style(
                         "border:1px solid #2f3548; border-radius:8px"):
                     ui.markdown(h["text"]).classes("text-sm")
@@ -1379,7 +1400,7 @@ def page_knowledge():
             render_error = results_col.clear  # noqa
             results_col.clear()
             with results_col:
-                ui.label(f"Ошибка поиска: {exc}").classes("text-negative")
+                ui.label(i18n.t("Ошибка поиска: ") + str(exc)).classes("text-negative")
             return
         render_docs()
         render_search(hits)
@@ -1390,7 +1411,7 @@ def page_knowledge():
             kb.delete_document(doc_id)
             kb.close()
         except Exception as exc:
-            ui.notify(f"Ошибка удаления: {exc}", type="negative")
+            ui.notify(i18n.t("Ошибка удаления: ") + str(exc), type="negative")
             return
         ui.notify(i18n.t("Удалено"))
         render_docs()
@@ -1405,9 +1426,7 @@ def page_knowledge():
 def page_tools():
     layout("/tools")
     page_title(i18n.t("Инструменты"),
-               "Каждый инструмент — отдельная папка в tools/. Чтобы добавить новый, "
-               "скопируйте существующий и правьте manifest.yaml: код платформы "
-               "менять не нужно.")
+               i18n.t("Каждый инструмент — отдельная папка в tools/. Чтобы добавить новый, скопируйте существующий и правьте manifest.yaml: код платформы менять не нужно."))
     platform = STATE.platform
     box = ui.column().classes("w-full gap-2")
 
@@ -1437,13 +1456,13 @@ def page_tools():
             if bool(check.get("enabled")) is not enabled:
                 raise ValueError(i18n.t("значение enabled не применилось"))
         except Exception as exc:  # noqa: BLE001
-            ui.notify(f"Не удалось изменить манифест: {exc}", type="negative")
+            ui.notify(i18n.t("Не удалось изменить манифест: ") + str(exc), type="negative")
             return
         manifest_path.write_text(patched, encoding="utf-8")
         platform.registry.discover()
         platform.refresh_tool_context()
         refresh()
-        ui.notify(f"Инструмент {entry.name}: {i18n.t('включён') if enabled else 'выключен'}")
+        ui.notify(i18n.t("Инструмент ") + entry.name + ": " + (i18n.t("включён") if enabled else i18n.t("выключен")))
 
     def refresh():
         box.clear()
@@ -1481,7 +1500,9 @@ def page_tools():
                                 if _is_domain_tool(entry):
                                     ui.html('<span class="ap-chip ap-chip-domain">'
                                             + i18n.t('геодомен (QGIS)') + '</span>')
-                            ui.label(entry.manifest.description or "—").classes("ap-muted")
+                            desc = getattr(entry.manifest, "description_en", None) \
+                                if i18n._lang() == "en" else None
+                            ui.label(desc or entry.manifest.description or "—").classes("ap-muted")
                             msg = entry.message
                             if i18n._lang() == "en" and re.search(r"[а-яА-Я]", msg):
                                 msg = {"готов": "ready"}.get(msg.split(" — ")[0], "") or ""
@@ -1571,7 +1592,7 @@ def page_settings():
             _default = STATE.platform.gateway.orchestrator_spec().model
         except Exception:  # noqa: BLE001
             _cands, _default = [], ""
-        planner_options = {"": f"По умолчанию — {_default or i18n.t('из models.yaml')}"}
+        planner_options = {"": i18n.t("По умолчанию — ") + str(_default or i18n.t("из models.yaml"))}
         for _spec in _cands:
             planner_options[_spec.model] = str(_spec.extra.get("label") or _spec.model)
         _saved = str((settings.get("orchestrator") or {}).get("model", ""))
