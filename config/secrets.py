@@ -200,7 +200,7 @@ def mask(value: str) -> str:
         return ""
     if len(value) <= 10:
         return "•" * len(value)
-    return f"{value[:6]}…{value[-4:]} ({len(value)} симв.)"
+    return f"{value[:6]}…{value[-4:]}"
 
 
 def load_secrets(override: bool = False) -> list[str]:
