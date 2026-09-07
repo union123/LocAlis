@@ -1071,9 +1071,9 @@ def page_task_detail(task_id: str):
                         ui.label(i18n.t("Итоговый ответ")).classes("ap-h2")
                     ui.markdown(record.final.answer)
                     ui.label(
-                        f"{_DECIDED_RU.get(record.final.decided_by, record.final.decided_by)}"
-                        f" · модель {record.final.model}"
-                        f" · {'облако' if record.final.used_cloud else 'локально'}"
+                        str(_DECIDED_RU.get(record.final.decided_by, record.final.decided_by))
+                        + i18n.t(" · модель ") + str(record.final.model)
+                        + " · " + (i18n.t("облако") if record.final.used_cloud else i18n.t("локально"))
                     ).classes("ap-muted")
                     if record.final.rationale:
                         with ui.expansion(i18n.t("Обоснование"), icon="notes").classes(
@@ -1161,8 +1161,8 @@ def page_task_detail(task_id: str):
                             _icon("check_circle" if call["ok"] else "cancel").classes(
                                 f"{_status_color(call['ok'])} text-sm mt-1")
                             ui.label(f"[{call['caller']}] {call['tool']}.{call['action']}"
-                                     f" · {call['duration_ms']} мс · "
-                                     f"{(call['summary'] or call['error'] or '')[:170]}"
+                                     + " · " + str(call['duration_ms']) + i18n.t(" мс · ")
+                                     + str((call['summary'] or call['error'] or '')[:170])
                                      ).classes("text-xs ap-log")
 
             with ui.row().classes("gap-2"):
@@ -1476,11 +1476,11 @@ def page_tools():
                                 actions_count = (len(entry.instance.actions())
                                                  if entry.instance is not None else 0)
                                 if actions_count:
-                                    ui.html(f'<span class="ap-chip">'
-                                            f'<span class="ap-mono">{actions_count}</span> действий</span>')
+                                    ui.html(f'<span class="ap-chip"><span class="ap-mono">{actions_count}</span>'
+                                            + i18n.t(" действий") + '</span>')
                                 if _is_domain_tool(entry):
                                     ui.html('<span class="ap-chip ap-chip-domain">'
-                                            'геодомен (QGIS)</span>')
+                                            + i18n.t('геодомен (QGIS)') + '</span>')
                             ui.label(entry.manifest.description or "—").classes("ap-muted")
                             msg = entry.message
                             if i18n._lang() == "en" and re.search(r"[а-яА-Я]", msg):
@@ -1675,8 +1675,7 @@ def page_settings():
 
         def do_reload():
             if _running_task_active():
-                ui.notify("Задача выполняется — дождитесь завершения или используйте "
-                          "аварийное выключение", type="warning")
+                ui.notify(i18n.t("Задача выполняется — дождитесь завершения или используйте аварийное выключение"), type="warning")
                 return
             STATE.reload_platform()
             STATE.platform  # форсируем пересборку ленивого синглтона
@@ -1712,8 +1711,7 @@ def page_settings():
             if not confirm.setdefault("armed_off", False):
                 confirm["armed_off"] = True
                 shutdown_btn.text = i18n.t("Остановить платформу? Нажмите ещё раз")
-                ui.notify("Выполняющаяся задача будет прервана! "
-                          "Нажмите ещё раз для подтверждения", type="negative")
+                ui.notify(i18n.t("Выполняющаяся задача будет прервана! Нажмите ещё раз для подтверждения"), type="negative")
                 return
             import os
             try:

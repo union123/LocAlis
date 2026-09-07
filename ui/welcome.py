@@ -145,38 +145,37 @@ def _render_welcome(dlg) -> None:
     ui.separator()
 
     # --- шаг 0: Ollama ---
-    _step_card(0, "Ollama", ollama_ok, ollama_detail if ollama_ok else
-               "не отвечает на http://127.0.0.1:11434 — "
-               "установите с ollama.com и нажмите «Проверить снова»",
-               "Проверить снова",
+    _step_card(1, i18n.t("Ollama"), ollama_ok,
+               i18n.t(ollama_detail) if ollama_ok else
+               i18n.t("не отвечает на http://127.0.0.1:11434 — установите с ollama.com и нажмите «Проверить снова»"),
+               i18n.t("Проверить снова"),
                lambda: (dlg.close(), open_about()))
 
     # --- шаг 1: модели ---
     if models_ok:
-        _step_card(1, "Обязательные модели", True,
-                   "qwen2.5:3b-instruct (роутер), bge-m3 (эмбеддер) — на месте")
+        _step_card(2, i18n.t("Обязательные модели"), True,
+                   i18n.t("qwen2.5:3b-instruct (роутер), bge-m3 (эмбеддер) — на месте"))
     else:
         _step_card(
-            1, "Обязательные модели", False,
+            2, i18n.t("Обязательные модели"), False,
             i18n.t("не хватает: ") + ", ".join(missing) +
-            " — выполните в консоли: ollama pull " + " && ollama pull ".join(missing),
-            "Проверить снова", lambda: (dlg.close(), open_about()))
+            i18n.t(" — выполните в консоли: ollama pull ") + " && ollama pull ".join(missing),
+            i18n.t("Проверить снова"), lambda: (dlg.close(), open_about()))
 
     # --- шаг 1b: ансамбль (опционально, информационно) ---
     ens_ok, ens_miss, _ = _check_ensemble()
     if ens_ok and not ens_miss:
-        _step_card(1, "Ансамбль моделей", True,
-                   "все модели ансамбля доступны (ollama + llama-server)")
+        _step_card(3, i18n.t("Ансамбль моделей"), True,
+                   i18n.t("все модели ансамбля доступны (ollama + llama-server)"))
     elif ens_miss:
         _step_card(
-            1, "Ансамбль моделей", False,
-            "не хватает: " + ", ".join(ens_miss) +
-            " — платформа работает без них в simple-режиме; для orchestrated/team "
-            "скачайте их (см. README, раздел Models)",
-            "Проверить снова", lambda: (dlg.close(), open_about()))
+            3, i18n.t("Ансамбль моделей"), False,
+            i18n.t("не хватает: ") + ", ".join(ens_miss) +
+            i18n.t(" — платформа работает без них в simple-режиме; для orchestrated/team скачайте их (см. README, раздел Models)"),
+            i18n.t("Проверить снова"), lambda: (dlg.close(), open_about()))
 
     # --- шаг 2: конфиг ---
-    _step_card(2, "Конфигурация моделей", cfg_ok, cfg_detail,
+    _step_card(4, i18n.t("Конфигурация моделей"), cfg_ok, i18n.t(cfg_detail),
                i18n.t("Открыть папку config"),
                lambda: os.startfile(str(Path("config").resolve()))  # noqa: S606
                if hasattr(os, "startfile") else None)
@@ -196,8 +195,7 @@ def _render_welcome(dlg) -> None:
 
         ui.button(i18n.t("Начать"), on_click=_start).props("unelevated")
     else:
-        ui.label("Выполните шаги выше и откройте этот экран снова "
-                 "(кнопка «?» в шапке).").classes("ap-muted")
+        ui.label(i18n.t("Выполните шаги выше и откройте этот экран снова (кнопка «?» в шапке).")).classes("ap-muted")
         ui.button(i18n.t("Проверить снова"),
                   on_click=lambda: (dlg.close(), open_about())).props("outline")
 
